@@ -21,7 +21,7 @@
 body {
 	font-family: var(--font-main);
 	font-weight: 400;
-	color: var(--color-text-primary);
+	color: var(--text-primary);
 	font-size: var(--md);
 }
 
@@ -34,7 +34,7 @@ h6 {
 	font-weight: 800;
 	line-height: 1.2;
 	margin: 0;
-	color: var(--color-text-primary);
+	color: var(--text-primary);
 }
 
 h1 {
@@ -61,7 +61,7 @@ h6 {
 
 small {
 	font-size: var(--sm);
-	color: var(--color-text-secondary);
+	color: var(--text-secondary);
 }
 
 strong,
@@ -70,12 +70,12 @@ b {
 }
 
 a {
-	color: var(--color-primary);
+	color: var(--brand-primary);
 	text-decoration: none;
 	font-weight: 600;
 	transition: color var(--fast);
 }
 
 a:hover {
-	color: var(--color-primary-dark);
+	color: var(--brand-secondary);
 }

@@ -4,15 +4,13 @@
 	let mapElement: HTMLElement;
 
 	$effect(() => {
-		let mapInstance: any;
-		let unmounted = false;
+		let map: any;
+		let resizeObserver: ResizeObserver;
 
 		const initMap = async () => {
 			if (!mapElement) return;
 
 			const L = (await import('leaflet')).default;
-
-			if (unmounted) return;
 
 			delete (L.Icon.Default.prototype as any)._getIconUrl;
 			L.Icon.Default.mergeOptions({
@@ -21,21 +19,24 @@
 				shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png'
 			});
 
-			mapInstance = L.map(mapElement, {
+			map = L.map(mapElement, {
 				zoomControl: false,
 				attributionControl: false
 			}).setView([-23.5505, -46.6333], 13);
 
 			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				attribution: '&copy; OpenStreetMap contributors'
-			}).addTo(mapInstance);
+			}).addTo(map);
+
+			resizeObserver = new ResizeObserver(() => map.invalidateSize());
+			resizeObserver.observe(mapElement);
 		};
 
 		initMap();
 
 		return () => {
-			unmounted = true;
-			if (mapInstance) mapInstance.remove();
+			resizeObserver?.disconnect();
+			map?.remove();
 		};
 	});
 </script>
@@ -50,6 +51,6 @@
 		width: 100%;
 		height: 100%;
 		z-index: var(--z-map, 1);
-		background-color: var(--color-surface-200, #f8f9fa);
+		background-color: var(--bg);
 	}
 </style>

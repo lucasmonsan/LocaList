@@ -1,9 +1,10 @@
 :root {
 	--base: clamp(1rem, 1vw + 1rem, 1.5rem);
 
-	--xxs: calc(var(--base) * 0.25);
-	--xs: calc(var(--base) * 0.5);
-	--sm: calc(var(--base) * 0.75);
+	--xxxs: calc(var(--base) * 0.2);
+	--xxs: calc(var(--base) * 0.4);
+	--xs: calc(var(--base) * 0.6);
+	--sm: calc(var(--base) * 0.8);
 	--md: var(--base);
 	--lg: calc(var(--base) * 1.25);
 	--xl: calc(var(--base) * 1.5);
@@ -15,26 +16,29 @@
 	--normal: ease-in-out 0.25s;
 	--slow: ease-in-out 0.375s;
 
-	--radius-1: 0.25rem;
-	--radius-2: 0.5rem;
-	--radius-3: 1rem;
+	--radius-out: 1rem;
+	--radius-in: 0.5rem;
 
-	--gap-1: var(--xxs);
+	--gap-1: var(--xxxs);
+	--gap-2: var(--xxs);
 
 	--padd-page: var(--sm);
 	--padd-component: var(--xs);
 
-	--border: 2px solid;
+	--border-width: 2px;
+	--border: var(--border-width) solid;
 
 	--z-map: 1;
-	--z-dock: 2;
-	--z-panel: 3;
-	--z-header: 4;
-	--z-modal: 5;
-	--z-toast: 6;
-	--z-splash: 9;
+	--z-dock: 10;
+	--z-panel: 20;
+	--z-header: 30;
+	--z-modal: 40;
+	--z-toast: 50;
+	--z-splash: 60;
 
-	--shadow-white: rgba(255, 255, 255, 0.25) 0px 8px 24px;
-	--shadow-black: 0px 0px 20px 4px rgba(0, 0, 0, 0.25);
-	--text-shadow-white: rgba(255, 255, 255, 0.25) 0px 8px 24px;
+	--bp-desktop: 896px;
+
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+	--shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
 }

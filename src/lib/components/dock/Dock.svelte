@@ -1,49 +1,53 @@
 <script>
-	import { slide } from 'svelte/transition';
-	import Button from '../ui/Button.svelte';
-	import SearchBar from '../search/SearchBar.svelte';
+	import { searchState } from '$lib/components/search/search.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
+	import SearchBar from '$lib/components/search/SearchBar.svelte';
+	import SearchHints from '$lib/components/search/SearchHints.svelte';
 	import GPSIcon from '$lib/icons/GPSIcon.svelte';
 	import ProfileIcon from '$lib/icons/ProfileIcon.svelte';
 
-	let start = $state(false);
-
-	$effect(() => {
-		start = true;
-	});
+	let showHints = $derived(searchState.focused || searchState.query.length > 0);
 </script>
 
-{#if start}
-	<footer transition:slide={{ axis: 'y' }}>
-		<Button variant="icon">
+<footer>
+	{#if showHints}
+		<SearchHints />
+	{/if}
+
+	<nav>
+		<Button variant="icon" border="out">
 			<ProfileIcon />
 		</Button>
 		<SearchBar />
-		<Button variant="icon">
+		<Button variant="icon" border="out">
 			<GPSIcon />
 		</Button>
-	</footer>
-{/if}
+	</nav>
+</footer>
 
 <style>
 	footer {
-		z-index: var(--z-dock, 2);
+		z-index: var(--z-dock, 10);
 		position: fixed;
-		bottom: 0;
+		bottom: var(--xs, 0.625rem);
 		display: flex;
-		gap: var(--gap-1);
-		width: 100%;
-		padding: var(--padd-component);
-		padding-top: var(--sm);
-		background: var(--color-surface-100);
-		border-radius: var(--radius-3) var(--radius-3) 0 0;
-		box-shadow: var(--shadow-black, 0px 0px 20px 4px rgba(0, 0, 0, 0.25));
+		flex-direction: column;
+		gap: var(--gap-2, 0.5rem);
+		width: calc(100% - var(--md, 1rem));
+
+		margin-left: auto;
+		margin-right: auto;
 
 		@media (min-width: 896px) {
-			left: var(--xs);
-			bottom: var(--xs);
-			max-width: calc(var(--md) * 20);
-			padding-top: var(--xs);
-			border-radius: var(--radius-3);
+			left: var(--xs, 0.625rem);
+			width: 100%;
+			max-width: calc(var(--md, 1rem) * 20);
 		}
+	}
+
+	nav {
+		display: flex;
+		gap: var(--gap-2, 0.5rem);
+		width: 100%;
 	}
 </style>

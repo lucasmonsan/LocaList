@@ -8,8 +8,7 @@
 
 <style>
 	main {
-		width: 95%;
-		height: 95dvh;
-		border: solid red;
+		width: 100%;
+		height: 100dvh;
 	}
 </style>

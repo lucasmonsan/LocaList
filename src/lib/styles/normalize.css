@@ -125,3 +125,8 @@ progress {
 summary {
 	display: list-item;
 }
+
+ul {
+	padding: 0;
+	margin: 0;
+}
