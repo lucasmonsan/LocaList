@@ -1,3 +1,5 @@
+// $lib/components/search/search.svelte.ts
+
 import type { OSMFeature, PhotonResponse } from '$lib/types/osm.types';
 import type { CacheItem } from '$lib/types/search.types';
 import { mapState } from '../map/map.svelte';
@@ -43,9 +45,7 @@ class SearchState {
   }
 
   async search() {
-    if (!this.query.trim()) return;
-    if (this.query === this.lastSearchedQuery) return;
-    if (this.isResultSelected) return;
+    if (!this.shouldPerformSearch()) return;
 
     this.loading = true;
     this.hasSearched = false;
@@ -59,56 +59,14 @@ class SearchState {
         return;
       }
 
-      const center = mapState.getCenter();
-      const params = new URLSearchParams({
-        q: this.query,
-        limit: String(API.RESULT_LIMIT),
-        lang: API.DEFAULT_LANG
-      });
-
-      if (center && typeof center.lat === 'number' && typeof center.lng === 'number') {
-        params.append('lat', String(center.lat));
-        params.append('lon', String(center.lng));
-      }
-
-      const url = `${API.PHOTON_BASE_URL}?${params}`;
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        if (url.includes(`&lang=${API.DEFAULT_LANG}`)) {
-          const fallbackParams = new URLSearchParams(params);
-          fallbackParams.delete('lang');
-          const fallbackUrl = `${API.PHOTON_BASE_URL}?${fallbackParams}`;
-          const fallbackResponse = await fetch(fallbackUrl);
-
-          if (fallbackResponse.ok) {
-            const data: PhotonResponse = await fallbackResponse.json();
-            this.processResults(data);
-            return;
-          }
-        }
-        this.results = [];
-        return;
-      }
-
-      const data: PhotonResponse = await response.json();
+      // Busca na API
+      const data = await this.fetchFromAPI();
       this.processResults(data);
 
     } catch (error) {
       this.results = [];
     } finally {
       this.finishSearch();
-    }
-  }
-
-  private processResults(data: PhotonResponse) {
-    if (!data || !data.features) {
-      this.results = [];
-    } else {
-      const uniqueResults = this.filterDuplicates(data.features);
-      const finalResults = uniqueResults.slice(0, SEARCH_CONFIG.MAX_DISPLAYED_RESULTS);
-      this.results = finalResults;
-      this.saveToCache(this.query, finalResults);
     }
   }
 
@@ -123,11 +81,81 @@ class SearchState {
     mapState.selectLocation(result);
   }
 
+  // ============================================
+  // MÉTODOS PRIVADOS - Lógica de Busca
+  // ============================================
+
+  private shouldPerformSearch(): boolean {
+    if (!this.query.trim()) return false;
+    if (this.query === this.lastSearchedQuery) return false;
+    if (this.isResultSelected) return false;
+    return true;
+  }
+
+  private async fetchFromAPI(): Promise<PhotonResponse> {
+    const url = this.buildAPIUrl();
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      return await this.tryFallbackRequest(url);
+    }
+
+    return await response.json();
+  }
+
+  private buildAPIUrl(): string {
+    const center = mapState.getCenter();
+    const params = new URLSearchParams({
+      q: this.query,
+      limit: String(API.RESULT_LIMIT),
+      lang: API.DEFAULT_LANG
+    });
+
+    if (center && typeof center.lat === 'number' && typeof center.lng === 'number') {
+      params.append('lat', String(center.lat));
+      params.append('lon', String(center.lng));
+    }
+
+    return `${API.PHOTON_BASE_URL}?${params}`;
+  }
+
+  private async tryFallbackRequest(originalUrl: string): Promise<PhotonResponse> {
+    if (!originalUrl.includes(`&lang=${API.DEFAULT_LANG}`)) {
+      throw new Error('API request failed');
+    }
+
+    // Remove language parameter and retry
+    const fallbackUrl = originalUrl.replace(`&lang=${API.DEFAULT_LANG}`, '');
+    const fallbackResponse = await fetch(fallbackUrl);
+
+    if (!fallbackResponse.ok) {
+      throw new Error('Fallback request failed');
+    }
+
+    return await fallbackResponse.json();
+  }
+
+  private processResults(data: PhotonResponse) {
+    if (!data || !data.features) {
+      this.results = [];
+      return;
+    }
+
+    const uniqueResults = this.filterDuplicates(data.features);
+    const finalResults = uniqueResults.slice(0, SEARCH_CONFIG.MAX_DISPLAYED_RESULTS);
+    this.results = finalResults;
+    this.saveToCache(this.query, finalResults);
+  }
+
   private finishSearch() {
     this.loading = false;
     this.hasSearched = true;
     this.lastSearchedQuery = this.query;
   }
+
+  // ============================================
+  // MÉTODOS PRIVADOS - Normalização e Filtragem
+  // ============================================
 
   private normalizeStr(str: string | undefined): string {
     return str ? str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : '';
@@ -140,25 +168,20 @@ class SearchState {
     const seenKeys = new Set<string>();
 
     return features.filter((feature) => {
-      const p = feature.properties;
-
-      if (p.country === 'Brazil') p.country = 'Brasil';
-
-      if (p.osm_id) {
-        if (seenIds.has(p.osm_id)) return false;
-        seenIds.add(p.osm_id);
+      // Normaliza país
+      if (feature.properties.country === 'Brazil') {
+        feature.properties.country = 'Brasil';
       }
 
-      let uniqueKey = '';
-      const name = this.normalizeStr(p.name);
-      const city = this.normalizeStr(p.city);
-      const street = this.normalizeStr(p.street);
-
-      if (p.osm_key === 'highway') {
-        uniqueKey = `street|${name}|${city}`;
-      } else {
-        uniqueKey = `poi|${name}|${city}|${street}`;
+      // Remove duplicados por ID
+      if (feature.properties.osm_id) {
+        if (seenIds.has(feature.properties.osm_id)) return false;
+        seenIds.add(feature.properties.osm_id);
       }
+
+      // Remove duplicados por chave única
+      const uniqueKey = this.generateUniqueKey(feature);
+      const name = this.normalizeStr(feature.properties.name);
 
       if (!name) return true;
 
@@ -167,6 +190,23 @@ class SearchState {
       return true;
     });
   }
+
+  private generateUniqueKey(feature: OSMFeature): string {
+    const p = feature.properties;
+    const name = this.normalizeStr(p.name);
+    const city = this.normalizeStr(p.city);
+    const street = this.normalizeStr(p.street);
+
+    if (p.osm_key === 'highway') {
+      return `street|${name}|${city}`;
+    }
+
+    return `poi|${name}|${city}|${street}`;
+  }
+
+  // ============================================
+  // MÉTODOS PRIVADOS - Cache
+  // ============================================
 
   private getCache(): CacheItem[] {
     if (typeof localStorage === 'undefined') return [];
@@ -181,9 +221,11 @@ class SearchState {
   private getFromCache(query: string): OSMFeature[] | null {
     const cache = this.getCache();
     const item = cache.find((c) => c.query.toLowerCase() === query.toLowerCase());
+
     if (item && Date.now() - item.timestamp < CACHE_CONFIG.TTL) {
       return item.results;
     }
+
     return null;
   }
 
@@ -192,6 +234,18 @@ class SearchState {
     const normalizedQuery = this.normalizeStr(partialQuery);
 
     // Busca em TODAS as entradas do cache
+    const allMatches = this.collectMatchesFromCache(cache, normalizedQuery);
+
+    if (allMatches.length === 0) return null;
+
+    // Remove duplicados e ordena por relevância
+    const uniqueMatches = this.deduplicateMatches(allMatches);
+    const sortedResults = this.sortByRelevance(uniqueMatches, normalizedQuery);
+
+    return sortedResults.slice(0, SEARCH_CONFIG.MAX_DISPLAYED_RESULTS);
+  }
+
+  private collectMatchesFromCache(cache: CacheItem[], normalizedQuery: string): OSMFeature[] {
     const allMatches: OSMFeature[] = [];
 
     cache.forEach(cacheItem => {
@@ -202,18 +256,23 @@ class SearchState {
       allMatches.push(...filtered);
     });
 
-    if (allMatches.length === 0) return null;
+    return allMatches;
+  }
 
-    // Remove duplicados por osm_id
+  private deduplicateMatches(matches: OSMFeature[]): OSMFeature[] {
     const uniqueMatches = new Map<number, OSMFeature>();
-    allMatches.forEach(match => {
+
+    matches.forEach(match => {
       if (!uniqueMatches.has(match.properties.osm_id)) {
         uniqueMatches.set(match.properties.osm_id, match);
       }
     });
 
-    // Ordena por relevância: startsWith primeiro, depois includes
-    const sortedResults = Array.from(uniqueMatches.values()).sort((a, b) => {
+    return Array.from(uniqueMatches.values());
+  }
+
+  private sortByRelevance(results: OSMFeature[], normalizedQuery: string): OSMFeature[] {
+    return results.sort((a, b) => {
       const nameA = this.normalizeStr(a.properties.name);
       const nameB = this.normalizeStr(b.properties.name);
       const startsA = nameA.startsWith(normalizedQuery);
@@ -223,12 +282,11 @@ class SearchState {
       if (!startsA && startsB) return 1;
       return 0;
     });
-
-    return sortedResults.slice(0, SEARCH_CONFIG.MAX_DISPLAYED_RESULTS);
   }
 
   private saveToCache(query: string, results: OSMFeature[]) {
     if (typeof localStorage === 'undefined') return;
+
     try {
       const cache = this.getCache();
       const newCache = cache.filter(c => c.query.toLowerCase() !== query.toLowerCase());
@@ -239,7 +297,9 @@ class SearchState {
         timestamp: Date.now()
       });
 
-      if (newCache.length > CACHE_CONFIG.MAX_ENTRIES) newCache.shift();
+      if (newCache.length > CACHE_CONFIG.MAX_ENTRIES) {
+        newCache.shift();
+      }
 
       localStorage.setItem(CACHE_CONFIG.KEY, JSON.stringify(newCache));
     } catch (e) {
@@ -249,9 +309,11 @@ class SearchState {
 
   private cleanOldCache() {
     if (typeof localStorage === 'undefined') return;
+
     try {
       const cache = this.getCache();
       const validCache = cache.filter(c => Date.now() - c.timestamp < CACHE_CONFIG.TTL);
+
       if (validCache.length !== cache.length) {
         localStorage.setItem(CACHE_CONFIG.KEY, JSON.stringify(validCache));
       }
