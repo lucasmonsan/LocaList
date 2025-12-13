@@ -4,6 +4,8 @@ import { mapState } from '../map/map.svelte';
 import { API } from '$lib/constants/api';
 import { CACHE_CONFIG, SEARCH_CONFIG } from '$lib/constants/config';
 import { normalizeStr } from '$lib/utils/string';
+import { toast } from '$lib/components/toast/toast.svelte';
+import { i18n } from '$lib/i18n/index.svelte';
 
 class SearchState {
   query = $state('');
@@ -77,6 +79,8 @@ class SearchState {
 
     } catch (error) {
       this.results = [];
+      toast.error(i18n.t.errors.searchFailed);
+      console.error('Search error:', error);
     } finally {
       this.finishSearch();
     }

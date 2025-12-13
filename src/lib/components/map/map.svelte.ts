@@ -2,6 +2,8 @@ import type { LeafletMap, LeafletMarker, LeafletLibrary } from '$lib/types/leafl
 import type { OSMFeature } from '$lib/types/osm.types';
 import { getPlaceType } from '$lib/utils/osm';
 import { MAP_CONFIG } from '$lib/constants/config';
+import { toast } from '$lib/components/toast/toast.svelte';
+import { i18n } from '$lib/i18n/index.svelte';
 import '$lib/styles/pins.css';
 
 class MapState {
@@ -27,11 +29,27 @@ class MapState {
         (position) => {
           const { latitude, longitude } = position.coords;
           this.map!.flyTo([latitude, longitude], MAP_CONFIG.SEARCH_ZOOM);
+          toast.success('Localização encontrada!');
         },
         (error) => {
-          console.error(error);
+          // GeolocationPositionError codes:
+          // 1 = PERMISSION_DENIED
+          // 2 = POSITION_UNAVAILABLE
+          // 3 = TIMEOUT
+
+          if (error.code === 1) {
+            toast.error(i18n.t.errors.locationDenied);
+          } else if (error.code === 2) {
+            toast.error(i18n.t.errors.locationUnavailable);
+          } else if (error.code === 3) {
+            toast.error(i18n.t.errors.locationTimeout);
+          } else {
+            toast.error(i18n.t.errors.locationUnavailable);
+          }
         }
       );
+    } else {
+      toast.error('Geolocalização não suportada pelo navegador.');
     }
   }
 
