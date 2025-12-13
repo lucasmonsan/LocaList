@@ -1,6 +1,7 @@
 <script lang="ts">
 	import 'leaflet/dist/leaflet.css';
 	import { mapState } from './map.svelte';
+	import { MAP_CONFIG } from '$lib/constants/config';
 
 	let mapElement: HTMLElement;
 
@@ -23,7 +24,7 @@
 			map = L.map(mapElement, {
 				zoomControl: false,
 				attributionControl: false
-			}).setView([-23.5505, -46.6333], 13);
+			}).setView(MAP_CONFIG.DEFAULT_CENTER, MAP_CONFIG.DEFAULT_ZOOM);
 
 			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				attribution: '&copy; OpenStreetMap contributors'

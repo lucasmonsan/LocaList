@@ -191,18 +191,40 @@ class SearchState {
     const cache = this.getCache();
     const normalizedQuery = this.normalizeStr(partialQuery);
 
-    // Encontra a entrada de cache mais relevante
-    const cacheMatch = cache.find(c => this.normalizeStr(c.query).includes(normalizedQuery));
+    // Busca em TODAS as entradas do cache
+    const allMatches: OSMFeature[] = [];
 
-    if (!cacheMatch) return null;
-
-    // Filtra os resultados que ainda batem com o input
-    const filteredResults = cacheMatch.results.filter(result => {
-      const name = this.normalizeStr(result.properties.name);
-      return name.includes(normalizedQuery);
+    cache.forEach(cacheItem => {
+      const filtered = cacheItem.results.filter(result => {
+        const name = this.normalizeStr(result.properties.name);
+        return name.includes(normalizedQuery);
+      });
+      allMatches.push(...filtered);
     });
 
-    return filteredResults.length > 0 ? filteredResults : null;
+    if (allMatches.length === 0) return null;
+
+    // Remove duplicados por osm_id
+    const uniqueMatches = new Map<number, OSMFeature>();
+    allMatches.forEach(match => {
+      if (!uniqueMatches.has(match.properties.osm_id)) {
+        uniqueMatches.set(match.properties.osm_id, match);
+      }
+    });
+
+    // Ordena por relevância: startsWith primeiro, depois includes
+    const sortedResults = Array.from(uniqueMatches.values()).sort((a, b) => {
+      const nameA = this.normalizeStr(a.properties.name);
+      const nameB = this.normalizeStr(b.properties.name);
+      const startsA = nameA.startsWith(normalizedQuery);
+      const startsB = nameB.startsWith(normalizedQuery);
+
+      if (startsA && !startsB) return -1;
+      if (!startsA && startsB) return 1;
+      return 0;
+    });
+
+    return sortedResults.slice(0, SEARCH_CONFIG.MAX_DISPLAYED_RESULTS);
   }
 
   private saveToCache(query: string, results: OSMFeature[]) {

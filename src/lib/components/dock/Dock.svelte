@@ -8,7 +8,7 @@
 	import GPSIcon from '$lib/icons/GPSIcon.svelte';
 	import ProfileIcon from '$lib/icons/ProfileIcon.svelte';
 
-	let showHints = $derived(searchState.focused && searchState.query.length === 0 && searchState.results.length === 0);
+	let showHints = $derived(searchState.focused && searchState.results.length === 0 && !searchState.hasSearched);
 	let showResults = $derived(searchState.results.length > 0 || searchState.hasSearched);
 </script>
 
