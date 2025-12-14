@@ -63,7 +63,6 @@
 		aria-label={i18n.t.buttons.search}
 		aria-autocomplete="list"
 		aria-controls="search-results"
-		aria-expanded={searchState.results.length > 0}
 	/>
 
 	<Button

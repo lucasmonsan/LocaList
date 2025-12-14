@@ -15,6 +15,15 @@
 	let currentTheme = $state<string>('auto');
 	let isAuthenticated = $state(false);
 
+	$effect(() => {
+		const savedTheme = localStorage.getItem('theme') || 'auto';
+		currentTheme = savedTheme;
+		applyTheme(savedTheme);
+
+		const savedLocale = (localStorage.getItem('locale') as Locale) || 'pt-BR';
+		i18n.setLocale(savedLocale);
+	});
+
 	const themes = [
 		{ value: 'light', icon: '☀️' },
 		{ value: 'auto', icon: '💻' },
@@ -38,6 +47,12 @@
 
 	function setTheme(theme: string) {
 		currentTheme = theme;
+		localStorage.setItem('theme', theme);
+		applyTheme(theme);
+		themeExpanded = false;
+	}
+
+	function applyTheme(theme: string) {
 		if (theme === 'light') {
 			document.documentElement.setAttribute('data-theme', 'light');
 		} else if (theme === 'dark') {
@@ -45,11 +60,11 @@
 		} else {
 			document.documentElement.removeAttribute('data-theme');
 		}
-		themeExpanded = false;
 	}
 
 	function setLanguage(locale: Locale) {
 		i18n.setLocale(locale);
+		localStorage.setItem('locale', locale);
 		languageExpanded = false;
 	}
 

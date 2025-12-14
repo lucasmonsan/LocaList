@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fade, fly } from 'svelte/transition';
 	import { searchState } from '$lib/components/search/search.svelte';
 	import { mapState } from '$lib/components/map/map.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -19,7 +20,7 @@
 	});
 </script>
 
-<footer>
+<footer transition:fade>
 	{#if isMenuOpen}
 		<ProfileMenu isOpen={isMenuOpen} onClose={() => (isMenuOpen = false)} />
 	{:else if showResults}

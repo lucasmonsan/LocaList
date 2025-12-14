@@ -16,6 +16,10 @@ class MapState {
     this.L = leafletLibrary;
   }
 
+  getMap() {
+    return this.map;
+  }
+
   getCenter() {
     if (!this.map) return null;
     return this.map.getCenter();

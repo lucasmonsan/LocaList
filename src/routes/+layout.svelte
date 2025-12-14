@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import { fade } from 'svelte/transition';
 	import favicon from '$lib/assets/favicon.svg';
 	import Dock from '$lib/components/dock/Dock.svelte';
 	import Map from '$lib/components/map/Map.svelte';
@@ -6,6 +8,8 @@
 	import '../app.css';
 
 	let { children } = $props();
+
+	let showDock = $derived(page.url.pathname === '/');
 </script>
 
 <svelte:head>
@@ -16,4 +20,7 @@
 <ToastContainer />
 <Map />
 {@render children()}
-<Dock />
+
+{#if showDock}
+	<Dock />
+{/if}
