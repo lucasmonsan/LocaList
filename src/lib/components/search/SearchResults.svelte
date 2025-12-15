@@ -3,7 +3,7 @@
 	import { searchState } from './search.svelte';
 	import { getPlaceLabel } from '$lib/utils/osm';
 	import { highlightMatch } from '$lib/utils/string';
-	import { i18n } from '$lib/i18n/index.svelte';
+	import { i18n } from '$lib/i18n/i18n.svelte';
 
 	let listElements: (HTMLLIElement | null)[] = [];
 

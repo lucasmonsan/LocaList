@@ -3,7 +3,7 @@ import type { OSMFeature } from '$lib/types/osm.types';
 import { getPlaceType } from '$lib/utils/osm';
 import { MAP_CONFIG } from '$lib/constants/config';
 import { toast } from '$lib/components/toast/toast.svelte';
-import { i18n } from '$lib/i18n/index.svelte';
+import { i18n } from '$lib/i18n/i18n.svelte';
 import '$lib/styles/pins.css';
 
 class MapState {

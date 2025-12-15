@@ -5,7 +5,7 @@ import { API } from '$lib/constants/api';
 import { CACHE_CONFIG, SEARCH_CONFIG } from '$lib/constants/config';
 import { normalizeStr } from '$lib/utils/string';
 import { toast } from '$lib/components/toast/toast.svelte';
-import { i18n } from '$lib/i18n/index.svelte';
+import { i18n } from '$lib/i18n/i18n.svelte';
 
 class SearchState {
   query = $state('');
@@ -13,6 +13,7 @@ class SearchState {
   loading = $state(false);
   results = $state<OSMFeature[]>([]);
   hasSearched = $state(false);
+  focusedIndex = $state(-1);
 
   lastSearchedQuery = $state('');
   private isResultSelected = false;
@@ -27,35 +28,63 @@ class SearchState {
     this.hasSearched = false;
     this.isResultSelected = false;
     this.lastSearchedQuery = '';
+    this.focusedIndex = -1;
   }
 
   setQuery(value: string) {
     this.query = value;
     this.isResultSelected = false;
+    this.focusedIndex = -1;
 
-    // Se query vazia, limpa resultados
     if (value.length === 0) {
       this.results = [];
       this.hasSearched = false;
       return;
     }
 
-    // Se query muito curta, não busca
     if (value.length < SEARCH_CONFIG.MIN_QUERY_LENGTH) {
       this.results = [];
       this.hasSearched = false;
       return;
     }
 
-    // Busca instantânea no cache
     const localResults = this.searchInCache(value);
 
     if (localResults && localResults.length > 0) {
       this.results = localResults;
-      // NÃO marca hasSearched = true (não buscou na API ainda)
     } else {
       this.results = [];
     }
+  }
+
+  navigateDown() {
+    if (this.results.length === 0) return;
+    if (this.focusedIndex < this.results.length - 1) {
+      this.focusedIndex++;
+    } else {
+      this.focusedIndex = 0;
+    }
+  }
+
+  navigateUp() {
+    if (this.results.length === 0) return;
+    if (this.focusedIndex > 0) {
+      this.focusedIndex--;
+    } else {
+      this.focusedIndex = this.results.length - 1;
+    }
+  }
+
+  selectFocused() {
+    if (this.focusedIndex >= 0 && this.results[this.focusedIndex]) {
+      this.selectResult(this.results[this.focusedIndex]);
+    }
+  }
+
+  closeResults() {
+    this.focused = false;
+    this.focusedIndex = -1;
+    this.results = [];
   }
 
   async search() {
@@ -63,6 +92,7 @@ class SearchState {
 
     this.loading = true;
     this.hasSearched = false;
+    this.focusedIndex = -1;
 
     try {
       // Tenta cache exato primeiro
@@ -73,7 +103,6 @@ class SearchState {
         return;
       }
 
-      // Busca na API
       const data = await this.fetchFromAPI();
       this.processResults(data);
 
@@ -93,6 +122,7 @@ class SearchState {
     this.isResultSelected = true;
     this.results = [];
     this.focused = false;
+    this.focusedIndex = -1;
 
     mapState.selectLocation(result);
   }
@@ -136,7 +166,6 @@ class SearchState {
       throw new Error('API request failed');
     }
 
-    // Remove language parameter and retry
     const fallbackUrl = originalUrl.replace(`&lang=${API.DEFAULT_LANG}`, '');
     const fallbackResponse = await fetch(fallbackUrl);
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
-	import { i18n } from '$lib/i18n/index.svelte';
+	import { i18n } from '$lib/i18n/i18n.svelte';
 	import { themeState } from '$lib/stores/theme.svelte';
 	import type { Locale } from '$lib/i18n/types';
 

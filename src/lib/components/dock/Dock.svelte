@@ -8,7 +8,7 @@
 	import SearchResults from '$lib/components/search/SearchResults.svelte';
 	import GPSIcon from '$lib/icons/GPSIcon.svelte';
 	import ProfileIcon from '$lib/icons/ProfileIcon.svelte';
-	import { i18n } from '$lib/i18n/index.svelte';
+	import { i18n } from '$lib/i18n/i18n.svelte';
 	import ProfileMenu from '../profile/ProfileMenu.svelte';
 
 	let showHints = $derived(searchState.focused && searchState.results.length === 0 && !searchState.hasSearched);
