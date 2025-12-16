@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import favicon from '$lib/assets/favicon.svg';
 	import Dock from '$lib/components/dock/Dock.svelte';
@@ -11,6 +12,11 @@
 	let { children } = $props();
 
 	let showDock = $derived(page.url.pathname === '/');
+	let showOverlay = $derived(page.url.pathname !== '/');
+
+	function handleOverlayClick() {
+		goto('/');
+	}
 </script>
 
 <svelte:head>
@@ -21,6 +27,10 @@
 <ToastContainer />
 <Map />
 
+{#if showOverlay}
+	<button class="overlay" onclick={handleOverlayClick} transition:fade aria-label="Fechar"></button>
+{/if}
+
 <Main>
 	{@render children()}
 </Main>
@@ -28,3 +38,17 @@
 {#if showDock}
 	<Dock />
 {/if}
+
+<style>
+	.overlay {
+		position: fixed;
+		inset: 0;
+		z-index: calc(var(--z-page) - 1);
+		background: var(--overlay);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		border: none;
+		padding: 0;
+		cursor: default;
+	}
+</style>
