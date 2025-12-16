@@ -5,7 +5,7 @@
 	--bg: #f8f9fa;
 	--surface: #ffffff;
 	--border-color: #dee2e6;
-	--overlay: rgba(0, 0, 0, 0.5);
+	--overlay: rgba(255, 255, 255, 0.25);
 
 	--text-primary: #101214;
 	--text-secondary: #6c757d;
@@ -23,7 +23,7 @@
 		--bg: #1a1d21;
 		--surface: #24282e;
 		--border-color: #40464f;
-		--overlay: rgba(0, 0, 0, 0.7);
+		--overlay: rgba(0, 0, 0, 0.25);
 
 		--text-primary: #f8f9fa;
 		--text-secondary: #adb5bd;
@@ -37,7 +37,7 @@
 	--bg: #1a1d21;
 	--surface: #24282e;
 	--border-color: #40464f;
-	--overlay: rgba(0, 0, 0, 0.7);
+	--overlay: rgba(0, 0, 0, 0.25);
 
 	--text-primary: #f8f9fa;
 	--text-secondary: #adb5bd;

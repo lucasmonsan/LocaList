@@ -45,7 +45,7 @@
 		inset: 0;
 		z-index: calc(var(--z-page) - 1);
 		background: var(--overlay);
-		backdrop-filter: blur(8px);
+		backdrop-filter: blur(2px);
 		-webkit-backdrop-filter: blur(8px);
 		border: none;
 		padding: 0;

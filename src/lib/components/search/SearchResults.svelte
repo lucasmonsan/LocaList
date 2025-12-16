@@ -93,7 +93,8 @@
 		&.focused button {
 			background: var(--bg);
 			outline: 2px solid var(--brand-primary);
-			outline-offset: -2px;
+			outline-offset: 2px;
+			box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-primary) 20%, transparent);
 		}
 	}
 

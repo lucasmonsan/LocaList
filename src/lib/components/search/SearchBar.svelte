@@ -50,6 +50,7 @@
 		e.preventDefault();
 		handleSubmit();
 	}}
+	data-loading={searchState.loading}
 >
 	<input
 		bind:this={inputElement}
@@ -60,6 +61,7 @@
 		onkeydown={handleKeydown}
 		onfocus={() => (searchState.focused = true)}
 		onblur={() => (searchState.focused = false)}
+		disabled={searchState.loading}
 		aria-label={i18n.t.buttons.search}
 		aria-autocomplete="list"
 		aria-controls="search-results"
@@ -69,6 +71,7 @@
 		variant="ghost"
 		onclick={() => searchState.query !== '' && handleClear()}
 		type="button"
+		disabled={searchState.loading}
 		aria-label={searchState.query === '' ? i18n.t.buttons.search : i18n.t.buttons.clear}
 	>
 		{#if searchState.loading}
@@ -86,24 +89,39 @@
 		overflow: hidden;
 		display: flex;
 		flex-grow: 1;
-		height: var(--xxxl, 3rem);
-		padding: 0 var(--xxs, 0.4rem) 0 var(--xs, 0.6rem);
-		border-radius: var(--radius-out, 1rem);
+		height: var(--xxxl);
+		padding: 0 var(--xxs) 0 var(--xs);
+		border-radius: var(--radius-out);
 		box-shadow: var(--shadow-md);
 		background: var(--surface);
-		transition: box-shadow var(--fast);
+		transition: all var(--fast);
 
 		&:focus-within {
 			box-shadow: var(--shadow-lg);
+		}
+
+		&[data-loading='true'] {
+			opacity: 0.8;
+			pointer-events: none;
+		}
+
+		&[data-loading='true'] input {
+			border-color: var(--brand-primary);
+			background: color-mix(in srgb, var(--brand-primary) 5%, var(--bg));
 		}
 	}
 
 	input {
 		width: 100%;
 		height: 100%;
-		font-size: var(--sm, 0.875rem);
+		font-size: var(--sm);
 		font-weight: 600;
 		color: var(--text-primary);
 		background: transparent;
+		transition: all var(--fast);
+	}
+
+	input:disabled {
+		cursor: wait;
 	}
 </style>
