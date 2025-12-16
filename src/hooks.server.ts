@@ -15,14 +15,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 					return value;
 				},
 				set(name, value, options) {
-					console.log('[SSO LocaList] Setting cookie:', name, 'with domain:', '.monsan.duckdns.org');
+					console.log('[SSO LocaList] Setting cookie:', name, 'with domain:', '.monsan.duckdns.org', 'options:', JSON.stringify(options));
 					event.cookies.set(name, value, {
 						...options,
 						path: '/',
-						domain: '.monsan.duckdns.org',
-						secure: true,
-						httpOnly: true,
-						sameSite: 'lax'
+						domain: '.monsan.duckdns.org'
 					});
 				},
 				remove(name, options) {
