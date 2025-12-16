@@ -57,10 +57,24 @@ export const ptBR: I18nDictionary = {
     searchFailed: 'Não foi possível buscar. Tente novamente.',
     locationDenied: 'Permissão de localização negada.',
     locationUnavailable: 'Localização indisponível.',
-    locationTimeout: 'Tempo esgotado ao buscar localização.'
+    locationTimeout: 'Tempo esgotado ao buscar localização.',
+    loadPinsFailed: 'Erro ao carregar pins.',
+    loadPinFailed: 'Erro ao carregar pin.',
+    createPinFailed: 'Erro ao criar pin.',
+    updatePinFailed: 'Erro ao atualizar pin.',
+    deletePinFailed: 'Erro ao deletar pin.',
+    favoriteFailed: 'Erro ao favoritar pin.',
+    uploadPhotoFailed: 'Erro ao enviar foto.',
+    loginRequired: 'Você precisa estar logado para realizar esta ação.'
   },
   success: {
-    locationFound: 'Localização encontrada!'
+    locationFound: 'Localização encontrada!',
+    pinCreated: 'Pin criado com sucesso!',
+    pinUpdated: 'Pin atualizado com sucesso!',
+    pinDeleted: 'Pin deletado com sucesso!',
+    pinFavorited: 'Pin favoritado!',
+    pinUnfavorited: 'Pin desfavoritado!',
+    photoUploaded: 'Foto enviada com sucesso!'
   },
   toast: {
     close: 'Fechar notificação'

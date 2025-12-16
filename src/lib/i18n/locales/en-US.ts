@@ -57,10 +57,24 @@ export const enUS: I18nDictionary = {
     searchFailed: 'Unable to search. Please try again.',
     locationDenied: 'Location permission denied.',
     locationUnavailable: 'Location unavailable.',
-    locationTimeout: 'Location request timed out.'
+    locationTimeout: 'Location request timed out.',
+    loadPinsFailed: 'Failed to load pins.',
+    loadPinFailed: 'Failed to load pin.',
+    createPinFailed: 'Failed to create pin.',
+    updatePinFailed: 'Failed to update pin.',
+    deletePinFailed: 'Failed to delete pin.',
+    favoriteFailed: 'Failed to favorite pin.',
+    uploadPhotoFailed: 'Failed to upload photo.',
+    loginRequired: 'You need to be logged in to perform this action.'
   },
   success: {
-    locationFound: 'Location found!'
+    locationFound: 'Location found!',
+    pinCreated: 'Pin created successfully!',
+    pinUpdated: 'Pin updated successfully!',
+    pinDeleted: 'Pin deleted successfully!',
+    pinFavorited: 'Pin favorited!',
+    pinUnfavorited: 'Pin unfavorited!',
+    photoUploaded: 'Photo uploaded successfully!'
   },
   toast: {
     close: 'Close notification'
