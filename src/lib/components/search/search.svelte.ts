@@ -17,9 +17,13 @@ class SearchState {
 
   lastSearchedQuery = $state('');
   private isResultSelected = false;
+  private initialized = false;
 
-  constructor() {
-    this.cleanOldCache();
+  private ensureInitialized() {
+    if (!this.initialized && typeof localStorage !== 'undefined') {
+      this.initialized = true;
+      this.cleanOldCache();
+    }
   }
 
   clear() {
@@ -32,6 +36,7 @@ class SearchState {
   }
 
   setQuery(value: string) {
+    this.ensureInitialized();
     this.query = value;
     this.isResultSelected = false;
     this.focusedIndex = -1;
@@ -88,6 +93,7 @@ class SearchState {
   }
 
   async search() {
+    this.ensureInitialized();
     if (!this.shouldPerformSearch()) return;
 
     this.loading = true;

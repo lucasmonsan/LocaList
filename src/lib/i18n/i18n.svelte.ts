@@ -10,9 +10,11 @@ const locales: Record<Locale, I18nDictionary> = {
 
 class I18n {
   private currentLocale: Locale = $state('pt-BR');
+  private initialized = false;
 
-  constructor() {
-    if (browser) {
+  private ensureInitialized() {
+    if (!this.initialized && browser) {
+      this.initialized = true;
       const saved = localStorage.getItem('locale') as Locale;
       if (saved && locales[saved]) {
         this.currentLocale = saved;
@@ -21,10 +23,12 @@ class I18n {
   }
 
   get locale(): Locale {
+    this.ensureInitialized();
     return this.currentLocale;
   }
 
   setLocale(locale: Locale) {
+    this.ensureInitialized();
     this.currentLocale = locale;
     if (browser) {
       localStorage.setItem('locale', locale);
@@ -32,6 +36,7 @@ class I18n {
   }
 
   get t(): I18nDictionary {
+    this.ensureInitialized();
     return locales[this.currentLocale] || locales['pt-BR'] || ptBR;
   }
 }

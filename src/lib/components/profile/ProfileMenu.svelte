@@ -66,8 +66,9 @@
 	}
 
 	function getThemeIcon() {
-		if (themeState.current === 'light') return SunIcon;
-		if (themeState.current === 'dark') return MoonIcon;
+		const theme = themeState.value;
+		if (theme === 'light') return SunIcon;
+		if (theme === 'dark') return MoonIcon;
 		return SunIcon;
 	}
 
@@ -103,10 +104,10 @@
 		<section>
 			<button class="collapsible" onclick={toggleTheme} aria-expanded={themeExpanded}>
 				<span class="collapsible-content">
-					<span class="icon-wrapper">
-						<svelte:component this={getThemeIcon()} />
-					</span>
-					{i18n.t.profile.theme.title}: <strong>{getThemeLabel(themeState.current)}</strong>
+				<span class="icon-wrapper">
+					<svelte:component this={getThemeIcon()} />
+				</span>
+				{i18n.t.profile.theme.title}: <strong>{getThemeLabel(themeState.value)}</strong>
 				</span>
 				<span class="arrow" class:expanded={themeExpanded}>▼</span>
 			</button>
@@ -114,10 +115,10 @@
 			{#if themeExpanded}
 				<div class="options" transition:slideUp={{ duration: 200 }}>
 					{#each themes as theme}
-						<button class="option" class:active={themeState.current === theme.value} onclick={() => handleThemeSelect(theme.value)}>
-							<span class="icon-wrapper small">
-								<svelte:component this={theme.icon} />
-							</span>
+					<button class="option" class:active={themeState.value === theme.value} onclick={() => handleThemeSelect(theme.value)}>
+						<span class="icon-wrapper small">
+							<svelte:component this={theme.icon} />
+						</span>
 							{getThemeLabel(theme.value)}
 						</button>
 					{/each}

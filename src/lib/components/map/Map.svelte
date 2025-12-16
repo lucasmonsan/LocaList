@@ -10,7 +10,7 @@
 	let currentTileLayer: any = null;
 
 	$effect(() => {
-		const theme = themeState.current;
+		const theme = themeState.value;
 		const map = mapState.getMap();
 
 		if (map && lightTiles && darkTiles && currentTileLayer) {
@@ -55,9 +55,9 @@
 				maxZoom: 20
 			});
 
-			const prefersDark = themeState.current === 'dark' || (themeState.current === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-			currentTileLayer = prefersDark ? darkTiles : lightTiles;
-			currentTileLayer.addTo(map);
+		const prefersDark = themeState.value === 'dark' || (themeState.value === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+		currentTileLayer = prefersDark ? darkTiles : lightTiles;
+		currentTileLayer.addTo(map);
 
 			mapState.setMap(map, L);
 

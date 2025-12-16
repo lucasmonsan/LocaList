@@ -2,9 +2,11 @@ import { browser } from '$app/environment';
 
 class ThemeState {
   current = $state('auto');
+  private initialized = false;
 
-  constructor() {
-    if (browser) {
+  private ensureInitialized() {
+    if (!this.initialized && browser) {
+      this.initialized = true;
       const saved = localStorage.getItem('theme');
       if (saved) {
         this.current = saved;
@@ -14,11 +16,17 @@ class ThemeState {
   }
 
   set(value: string) {
+    this.ensureInitialized();
     this.current = value;
     if (browser) {
       localStorage.setItem('theme', value);
       this.apply(value);
     }
+  }
+
+  get value(): string {
+    this.ensureInitialized();
+    return this.current;
   }
 
   private apply(value: string) {
