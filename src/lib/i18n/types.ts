@@ -59,6 +59,9 @@ export interface I18nDictionary {
   toast: {
     close: string;
   };
+  categories: {
+    [key: string]: string;
+  };
   places: {
     [key: string]: string;
   };

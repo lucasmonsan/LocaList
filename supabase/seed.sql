@@ -2,25 +2,25 @@
 -- Map Database Seed Data
 -- ============================================
 
--- Insert default pin categories
+-- Insert default pin categories (using i18n keys)
 INSERT INTO map_pin_categories (name, icon, color) VALUES
-  ('Restaurante', '🍽️', '#FF6B6B'),
-  ('Café', '☕', '#8B4513'),
-  ('Parque', '🌳', '#4ECDC4'),
-  ('Museu', '🏛️', '#95E1D3'),
-  ('Shopping', '🛍️', '#F38181'),
-  ('Academia', '💪', '#AA96DA'),
-  ('Hospital', '🏥', '#FF5252'),
-  ('Escola', '🎓', '#FCBF49'),
-  ('Mercado', '🛒', '#06FFA5'),
-  ('Cinema', '🎬', '#B565D8'),
-  ('Bar', '🍺', '#FFA500'),
-  ('Hotel', '🏨', '#6C5CE7'),
-  ('Praia', '🏖️', '#74B9FF'),
-  ('Igreja', '⛪', '#DFE6E9'),
-  ('Posto', '⛽', '#636E72'),
-  ('Banco', '🏦', '#00B894'),
-  ('Farmácia', '💊', '#00CEC9'),
-  ('Outro', '📍', '#A29BFE')
+  ('restaurant', '🍽️', '#FF6B6B'),
+  ('cafe', '☕', '#8B4513'),
+  ('park', '🌳', '#4ECDC4'),
+  ('museum', '🏛️', '#95E1D3'),
+  ('shopping', '🛍️', '#F38181'),
+  ('gym', '💪', '#AA96DA'),
+  ('hospital', '🏥', '#FF5252'),
+  ('school', '🎓', '#FCBF49'),
+  ('market', '🛒', '#06FFA5'),
+  ('cinema', '🎬', '#B565D8'),
+  ('bar', '🍺', '#FFA500'),
+  ('hotel', '🏨', '#6C5CE7'),
+  ('beach', '🏖️', '#74B9FF'),
+  ('church', '⛪', '#DFE6E9'),
+  ('gas_station', '⛽', '#636E72'),
+  ('bank', '🏦', '#00B894'),
+  ('pharmacy', '💊', '#00CEC9'),
+  ('other', '📍', '#A29BFE')
 ON CONFLICT (name) DO NOTHING;
 

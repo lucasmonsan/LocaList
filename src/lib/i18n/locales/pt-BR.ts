@@ -65,6 +65,26 @@ export const ptBR: I18nDictionary = {
   toast: {
     close: 'Fechar notificação'
   },
+  categories: {
+    restaurant: 'Restaurante',
+    cafe: 'Café',
+    park: 'Parque',
+    museum: 'Museu',
+    shopping: 'Shopping',
+    gym: 'Academia',
+    hospital: 'Hospital',
+    school: 'Escola',
+    market: 'Mercado',
+    cinema: 'Cinema',
+    bar: 'Bar',
+    hotel: 'Hotel',
+    beach: 'Praia',
+    church: 'Igreja',
+    gas_station: 'Posto',
+    bank: 'Banco',
+    pharmacy: 'Farmácia',
+    other: 'Outro'
+  },
   places: {
     'place:city': 'Cidade',
     'place:town': 'Município',

@@ -65,6 +65,26 @@ export const enUS: I18nDictionary = {
   toast: {
     close: 'Close notification'
   },
+  categories: {
+    restaurant: 'Restaurant',
+    cafe: 'Cafe',
+    park: 'Park',
+    museum: 'Museum',
+    shopping: 'Shopping Mall',
+    gym: 'Gym',
+    hospital: 'Hospital',
+    school: 'School',
+    market: 'Market',
+    cinema: 'Cinema',
+    bar: 'Bar',
+    hotel: 'Hotel',
+    beach: 'Beach',
+    church: 'Church',
+    gas_station: 'Gas Station',
+    bank: 'Bank',
+    pharmacy: 'Pharmacy',
+    other: 'Other'
+  },
   places: {
     'place:city': 'City',
     'place:town': 'Town',
