@@ -1,0 +1,36 @@
+<svg viewBox="0 -0.5 25 25" fill="none">
+	<path
+		fill-rule="evenodd"
+		clip-rule="evenodd"
+		d="M5.5 11V13C5.5 16.3137 8.18629 19 11.5 19H13.5C16.8137 19 19.5 16.3137 19.5 13V11C19.5 7.68629 16.8137 5 13.5 5H11.5C8.18629 5 5.5 7.68629 5.5 11Z"
+		stroke="#000000"
+		stroke-width="1.5"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	/>
+	<path d="M12.5 12V16" stroke="#000000" stroke-width="1.5" stroke-linecap="round" />
+	<path d="M12.5 9.5C12.2243 9.5 12 9.2757 12 9C12 8.7243 12.2243 8.5 12.5 8.5C12.7757 8.5 13 8.7243 13 9C13 9.2757 12.7757 9.5 12.5 9.5Z" fill="#000000" />
+	<path d="M12.5 8C13.0523 8 13.5 8.44772 13.5 9C13.5 9.55228 13.0523 10 12.5 10C11.9477 10 11.5 9.55228 11.5 9C11.5 8.44772 11.9477 8 12.5 8Z" fill="#000000" />
+</svg>
+
+<style>
+	svg {
+		width: 100%;
+		height: 100%;
+	}
+
+	path {
+		&:nth-child(1) {
+			stroke: currentColor;
+		}
+		&:nth-child(2) {
+			stroke: currentColor;
+		}
+		&:nth-child(3) {
+			fill: currentColor;
+		}
+		&:nth-child(4) {
+			fill: currentColor;
+		}
+	}
+</style>

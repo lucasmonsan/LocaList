@@ -4,6 +4,14 @@
 	import { themeState } from '$lib/stores/theme.svelte';
 	import { authState } from '$lib/stores/auth.svelte';
 	import type { Locale } from '$lib/i18n/types';
+	import SunIcon from '$lib/icons/SunIcon.svelte';
+	import MoonIcon from '$lib/icons/MoonIcon.svelte';
+	import LanguageIcon from '$lib/icons/LanguageIcon.svelte';
+	import StarIcon from '$lib/icons/StarIcon.svelte';
+	import ReviewsIcon from '$lib/icons/ReviewsIcon.svelte';
+	import KeyIcon from '$lib/icons/KeyIcon.svelte';
+	import TrashIcon from '$lib/icons/TrashIcon.svelte';
+	import InfoIcon from '$lib/icons/InfoIcon.svelte';
 
 	interface Props {
 		isOpen: boolean;
@@ -16,9 +24,9 @@
 	let languageExpanded = $state(false);
 
 	const themes = [
-		{ value: 'light', icon: '☀️' },
-		{ value: 'auto', icon: '💻' },
-		{ value: 'dark', icon: '🌙' }
+		{ value: 'light', icon: SunIcon },
+		{ value: 'auto', icon: SunIcon },
+		{ value: 'dark', icon: MoonIcon }
 	];
 
 	const languages: { value: Locale; label: string; flag: string }[] = [
@@ -57,6 +65,12 @@
 		return lang ? lang.label : 'Português';
 	}
 
+	function getThemeIcon() {
+		if (themeState.current === 'light') return SunIcon;
+		if (themeState.current === 'dark') return MoonIcon;
+		return SunIcon;
+	}
+
 	function handleClickOutside(e: MouseEvent) {
 		const target = e.target as HTMLElement;
 		if (!target.closest('.profile-menu') && !target.closest('[aria-label*="erfil"]')) {
@@ -88,8 +102,11 @@
 	<div class="profile-menu shadow" transition:slideUp>
 		<section>
 			<button class="collapsible" onclick={toggleTheme} aria-expanded={themeExpanded}>
-				<span>
-					🌙 {i18n.t.profile.theme.title}: <strong>{getThemeLabel(themeState.current)}</strong>
+				<span class="collapsible-content">
+					<span class="icon-wrapper">
+						<svelte:component this={getThemeIcon()} />
+					</span>
+					{i18n.t.profile.theme.title}: <strong>{getThemeLabel(themeState.current)}</strong>
 				</span>
 				<span class="arrow" class:expanded={themeExpanded}>▼</span>
 			</button>
@@ -98,7 +115,9 @@
 				<div class="options" transition:slideUp={{ duration: 200 }}>
 					{#each themes as theme}
 						<button class="option" class:active={themeState.current === theme.value} onclick={() => handleThemeSelect(theme.value)}>
-							{theme.icon}
+							<span class="icon-wrapper small">
+								<svelte:component this={theme.icon} />
+							</span>
 							{getThemeLabel(theme.value)}
 						</button>
 					{/each}
@@ -108,8 +127,11 @@
 
 		<section>
 			<button class="collapsible" onclick={toggleLanguage} aria-expanded={languageExpanded}>
-				<span>
-					🌐 {i18n.t.profile.language.title}: <strong>{getLanguageLabel(i18n.locale)}</strong>
+				<span class="collapsible-content">
+					<span class="icon-wrapper">
+						<LanguageIcon />
+					</span>
+					{i18n.t.profile.language.title}: <strong>{getLanguageLabel(i18n.locale)}</strong>
 				</span>
 				<span class="arrow" class:expanded={languageExpanded}>▼</span>
 			</button>
@@ -129,10 +151,23 @@
 		<div class="separator"></div>
 
 		<section class="links">
-			<a href="/favorites">⭐ {i18n.t.profile.favorites}</a>
-			<a href="/reviews">📝 {i18n.t.profile.reviews}</a>
+			<a href="/favorites">
+				<span class="icon-wrapper small">
+					<StarIcon />
+				</span>
+				{i18n.t.profile.favorites}
+			</a>
+			<a href="/reviews">
+				<span class="icon-wrapper small">
+					<ReviewsIcon />
+				</span>
+				{i18n.t.profile.reviews}
+			</a>
 			<a href="https://github.com/lucasmonsan/localista" target="_blank" rel="noopener noreferrer">
-				ℹ️ {i18n.t.profile.about}
+				<span class="icon-wrapper small">
+					<InfoIcon />
+				</span>
+				{i18n.t.profile.about}
 			</a>
 		</section>
 
@@ -144,12 +179,18 @@
 					<small>{authState.user.email}</small>
 				</div>
 				<button class="logout" onclick={() => authState.signOut()}>
-					🚪 {i18n.t.profile.logout}
+					<span class="icon-wrapper small">
+						<TrashIcon />
+					</span>
+					{i18n.t.profile.logout}
 				</button>
 			{:else}
 				<a href="/login" class="login-link">
 					<button class="login">
-						🔑 {i18n.t.profile.login}
+						<span class="icon-wrapper small">
+							<KeyIcon />
+						</span>
+						{i18n.t.profile.login}
 					</button>
 				</a>
 			{/if}
@@ -200,6 +241,27 @@
 		}
 	}
 
+	.collapsible-content {
+		display: flex;
+		align-items: center;
+		gap: var(--xxs);
+	}
+
+	.icon-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: var(--lg);
+		height: var(--lg);
+		color: var(--text-secondary);
+
+		&.small {
+			width: var(--md);
+			height: var(--md);
+		}
+	}
+
 	.arrow {
 		font-size: var(--xs);
 		transition: transform var(--fast);
@@ -219,6 +281,9 @@
 
 	.option {
 		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: var(--xxs);
 		padding: var(--xxs) var(--xs);
 		text-align: left;
 		background: transparent;
@@ -239,6 +304,10 @@
 			color: var(--surface);
 			font-weight: 600;
 		}
+
+		&.active .icon-wrapper {
+			color: var(--surface);
+		}
 	}
 
 	.separator {
@@ -251,7 +320,9 @@
 	}
 
 	.links a {
-		display: block;
+		display: flex;
+		align-items: center;
+		gap: var(--xxs);
 		padding: var(--xxs) var(--xs);
 		font-size: var(--sm);
 		font-weight: 600;
@@ -276,6 +347,10 @@
 	.login,
 	.logout {
 		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--xxs);
 		padding: var(--xxs) var(--xs);
 		font-size: var(--sm);
 		font-weight: 600;
@@ -294,6 +369,10 @@
 		}
 	}
 
+	.login .icon-wrapper {
+		color: var(--surface);
+	}
+
 	.logout {
 		background: transparent;
 		color: var(--error);
@@ -301,6 +380,10 @@
 		&:hover {
 			background: var(--bg);
 		}
+	}
+
+	.logout .icon-wrapper {
+		color: var(--error);
 	}
 
 	.user-info {
