@@ -1,49 +1,20 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { supabase } from '$lib/services/supabase';
+	import { enhance } from '$app/forms';
 	import Button from '$lib/components/ui/Button.svelte';
 	import { i18n } from '$lib/i18n/i18n.svelte';
 	import { toast } from '$lib/components/toast/toast.svelte';
 	import { fade } from 'svelte/transition';
 
-	let email = $state('');
-	let password = $state('');
-	let name = $state('');
-	let loading = $state(false);
+	let { form } = $props();
 
+	let loading = $state(false);
 	let t = $derived(i18n.t);
 
-	async function handleSignup() {
-		if (!email || !password || !name) {
-			toast.error(t.auth?.errors.generic || 'Preencha todos os campos');
-			return;
+	$effect(() => {
+		if (form?.message) {
+			toast.error(form.message);
 		}
-
-		if (password.length < 6) {
-			toast.error(t.auth?.errors.passwordShort || 'Senha curta demais');
-			return;
-		}
-
-		loading = true;
-		const { error } = await supabase.auth.signUp({
-			email,
-			password,
-			options: {
-				data: {
-					full_name: name
-				}
-			}
-		});
-
-		loading = false;
-
-		if (error) {
-			toast.error(error.message);
-		} else {
-			toast.success('Conta criada! Verifique seu e-mail.');
-			goto('/login');
-		}
-	}
+	});
 </script>
 
 <div class="container" transition:fade>
@@ -52,28 +23,43 @@
 			<h1>{t.auth.signupTitle}</h1>
 
 			<form
-				onsubmit={(e) => {
-					e.preventDefault();
-					handleSignup();
+				method="POST"
+				action="?/signup"
+				use:enhance={() => {
+					loading = true;
+					return async ({ update }) => {
+						await update();
+						loading = false;
+					};
 				}}
 			>
 				<div class="field">
-					<label for="name">{t.auth.nameLabel}</label>
-					<input type="text" id="name" bind:value={name} required />
-				</div>
-
-				<div class="field">
 					<label for="email">{t.auth.emailLabel}</label>
-					<input type="email" id="email" bind:value={email} required />
+					<input type="email" id="email" name="email" required />
 				</div>
 
 				<div class="field">
 					<label for="password">{t.auth.passwordLabel}</label>
-					<input type="password" id="password" bind:value={password} required minlength="6" />
+					<input type="password" id="password" name="password" required minlength="6" />
+				</div>
+
+				<div class="field">
+					<label for="confirmPassword">Confirmar Senha</label>
+					<input type="password" id="confirmPassword" name="confirmPassword" required minlength="6" />
 				</div>
 
 				<Button type="submit" disabled={loading} style="width: 100%; justify-content: center;">
 					{loading ? '...' : t.auth.signupButton}
+				</Button>
+			</form>
+
+			<div class="divider">
+				<span>{t.auth.or}</span>
+			</div>
+
+			<form method="POST" action="?/google">
+				<Button type="submit" style="width: 100%; justify-content: center;">
+					{t.auth.googleLogin}
 				</Button>
 			</form>
 
@@ -115,6 +101,25 @@
 			flex-direction: column;
 			gap: var(--xxs);
 		}
+
+		&.divider {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			color: var(--text-secondary);
+			font-size: var(--sm);
+
+			&::before,
+			&::after {
+				content: '';
+				flex: 1;
+				border-bottom: 2px solid var(--border-color);
+			}
+		}
+	}
+
+	span {
+		padding: 0 var(--xs);
 	}
 
 	h1 {

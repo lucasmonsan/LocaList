@@ -1,59 +1,20 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { supabase } from '$lib/services/supabase';
+	import { enhance } from '$app/forms';
 	import Button from '$lib/components/ui/Button.svelte';
-	import { i18n } from '$lib/i18n/i18n.svelte'; // Import corrigido
+	import { i18n } from '$lib/i18n/i18n.svelte';
 	import { toast } from '$lib/components/toast/toast.svelte';
 	import { fade } from 'svelte/transition';
 
-	let email = $state('');
-	let password = $state('');
-	let loading = $state(false);
+	let { form } = $props();
 
+	let loading = $state(false);
 	let t = $derived(i18n.t);
 
-	async function handleLogin() {
-		console.log('--- Início handleLogin ---');
-		console.log('Email:', email);
-		console.log('Senha preenchida:', !!password);
-
-		if (!email || !password) {
-			console.log('Validação falhou: campos vazios');
-			toast.error(t.auth?.errors.generic || 'Erro genérico');
-			return;
+	$effect(() => {
+		if (form?.message) {
+			toast.error(form.message);
 		}
-
-		loading = true;
-		console.log('Chamando supabase.auth.signInWithPassword...');
-
-		const { data, error } = await supabase.auth.signInWithPassword({
-			email,
-			password
-		});
-
-		console.log('Supabase respondeu:', { data, error });
-		loading = false;
-
-		if (error) {
-			console.error('Erro no login:', error.message);
-			toast.error(error.message);
-		} else {
-			console.log('Login sucesso! Redirecionando...');
-			goto('/');
-		}
-	}
-
-	async function handleGoogleLogin() {
-		console.log('Iniciando login Google...');
-		const { error } = await supabase.auth.signInWithOAuth({
-			provider: 'google'
-		});
-
-		if (error) {
-			console.error('Erro Google:', error);
-			toast.error(error.message);
-		}
-	}
+	});
 </script>
 
 <div class="card" transition:fade>
@@ -61,20 +22,24 @@
 		<h1>{t.auth.loginTitle}</h1>
 
 		<form
-			onsubmit={(e) => {
-				console.log('Form onsubmit disparado');
-				e.preventDefault();
-				handleLogin();
+			method="POST"
+			action="?/login"
+			use:enhance={() => {
+				loading = true;
+				return async ({ update }) => {
+					await update();
+					loading = false;
+				};
 			}}
 		>
 			<div class="field">
 				<label for="email">{t.auth.emailLabel}</label>
-				<input type="email" id="email" bind:value={email} required />
+				<input type="email" id="email" name="email" required />
 			</div>
 
 			<div class="field">
 				<label for="password">{t.auth.passwordLabel}</label>
-				<input type="password" id="password" bind:value={password} required />
+				<input type="password" id="password" name="password" required />
 			</div>
 
 			<Button type="submit" disabled={loading} style="width: 100%; justify-content: center;">
@@ -86,9 +51,11 @@
 			<span>{t.auth.or}</span>
 		</div>
 
-		<Button onclick={handleGoogleLogin} style="width: 100%; justify-content: center;">
-			{t.auth.googleLogin}
-		</Button>
+		<form method="POST" action="?/google">
+			<Button type="submit" style="width: 100%; justify-content: center;">
+				{t.auth.googleLogin}
+			</Button>
+		</form>
 
 		<p>
 			<a href="/signup">{t.auth.noAccount}</a>

@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { fade } from 'svelte/transition';
+	import { authState } from '$lib/stores/auth.svelte';
 	import favicon from '$lib/assets/favicon.svg';
 	import Dock from '$lib/components/dock/Dock.svelte';
 	import Map from '$lib/components/map/Map.svelte';
@@ -9,7 +10,9 @@
 	import '../app.css';
 	import Main from '$lib/components/layout/Main.svelte';
 
-	let { children } = $props();
+	let { children, data } = $props();
+
+	authState.init(data.supabase, data.session);
 
 	let showDock = $derived(page.url.pathname === '/');
 	let showOverlay = $derived(page.url.pathname !== '/');
