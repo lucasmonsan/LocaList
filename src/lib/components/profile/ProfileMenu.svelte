@@ -185,16 +185,16 @@
 					</span>
 					{i18n.t.profile.logout}
 				</button>
-			{:else}
-				<a href="/login" class="login-link">
-					<button class="login">
-						<span class="icon-wrapper small">
-							<KeyIcon />
-						</span>
-						{i18n.t.profile.login}
-					</button>
-				</a>
-			{/if}
+		{:else}
+			<a href="https://monsan.duckdns.org/login?redirect=https://map.monsan.duckdns.org" class="login-link">
+				<button class="login">
+					<span class="icon-wrapper small">
+						<KeyIcon />
+					</span>
+					{i18n.t.profile.login}
+				</button>
+			</a>
+		{/if}
 		</section>
 	</div>
 {/if}
