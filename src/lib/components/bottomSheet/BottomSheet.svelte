@@ -115,7 +115,6 @@
 				toast.info(i18n.t.success.pinUnfavorited);
 			}
 		} catch (error) {
-			console.error('Error toggling favorite:', error);
 			toast.error(i18n.t.errors.favoriteFailed);
 		} finally {
 			favoriteLoading = false;

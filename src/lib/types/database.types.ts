@@ -276,13 +276,18 @@ export type PinWithDetails = Pin & {
   is_favorited?: boolean
 }
 
+// Type para reviews com dados extras do usuário (JOIN ou agregação)
 export type ReviewWithUser = Review & {
-  user: {
+  user?: {
     id: string
     email: string
-    full_name: string
-    avatar_url: string
+    full_name?: string
+    avatar_url?: string
   }
-  is_upvoted?: boolean
+  // Campos calculados/agregados
+  user_upvoted?: boolean
+  upvotes_count?: number
+  user_name?: string
+  user_avatar?: string
 }
 

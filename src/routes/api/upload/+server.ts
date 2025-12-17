@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { StorageService } from '$lib/services/storage.service';
+import { logger } from '$lib/utils/logger';
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	try {
@@ -23,7 +24,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 		return json(urls);
 	} catch (error) {
-		console.error('Upload error:', error);
+		logger.error('Upload error:', error);
 		return json(
 			{ error: error instanceof Error ? error.message : 'Upload failed' },
 			{ status: 500 }

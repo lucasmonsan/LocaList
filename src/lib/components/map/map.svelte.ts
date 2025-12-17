@@ -1,3 +1,4 @@
+import { logger } from '$lib/utils/logger';
 import type { LeafletMap, LeafletMarker, LeafletLibrary } from '$lib/types/leaflet.types';
 import type { OSMFeature } from '$lib/types/osm.types';
 import type { PinWithCategory } from '$lib/types/database.types';
@@ -223,7 +224,7 @@ class MapState {
         this.updateUserLocationMarker();
       },
       (error) => {
-        console.warn('Geolocation watch error:', error);
+        logger.warn('Geolocation watch error:', error);
       },
       {
         enableHighAccuracy: true,

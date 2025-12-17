@@ -18,7 +18,6 @@ class PinsState {
 		} catch (err) {
 			this.error = err instanceof Error ? err.message : 'Failed to load pins';
 			toast.error(i18n.t.errors.loadPinsFailed || 'Failed to load pins');
-			console.error('Error loading pins:', err);
 		} finally {
 			this.loading = false;
 		}
@@ -38,7 +37,6 @@ class PinsState {
 			this.pins = await PinsService.getPinsByBounds(minLat, maxLat, minLng, maxLng, userId);
 		} catch (err) {
 			this.error = err instanceof Error ? err.message : 'Failed to load pins';
-			console.error('Error loading pins by bounds:', err);
 		} finally {
 			this.loading = false;
 		}
@@ -53,7 +51,6 @@ class PinsState {
 		} catch (err) {
 			this.error = err instanceof Error ? err.message : 'Failed to load pin';
 			toast.error(i18n.t.errors.loadPinFailed || 'Failed to load pin');
-			console.error('Error loading pin:', err);
 		} finally {
 			this.loading = false;
 		}
@@ -80,7 +77,6 @@ class PinsState {
 			);
 		} catch (err) {
 			toast.error(i18n.t.errors.favoriteFailed || 'Failed to update favorite');
-			console.error('Error toggling favorite:', err);
 		}
 	}
 
@@ -96,7 +92,6 @@ class PinsState {
 			toast.success(i18n.t.success.pinDeleted || 'Pin deleted!');
 		} catch (err) {
 			toast.error(i18n.t.errors.deletePinFailed || 'Failed to delete pin');
-			console.error('Error deleting pin:', err);
 		}
 	}
 }

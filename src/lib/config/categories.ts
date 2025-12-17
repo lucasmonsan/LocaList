@@ -1,4 +1,4 @@
-import type { LucideIcon } from 'lucide-svelte';
+import type { ComponentType } from 'svelte';
 import {
 	Utensils,
 	Coffee,

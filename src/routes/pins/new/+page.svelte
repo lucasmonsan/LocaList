@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { logger } from '$lib/utils/logger';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { authState } from '$lib/stores/auth.svelte';
@@ -45,7 +46,7 @@
 				categoryId = categories[0].id;
 			}
 		} catch (err) {
-			console.error('Error loading categories:', err);
+			logger.error('Error loading categories:', err);
 			toast.error('Erro ao carregar categorias');
 		}
 	});
@@ -71,19 +72,19 @@
 				toast.info(`Comprimindo imagem (${originalSize})...`);
 
 				// Compress image
-				const { original, thumbnail } = await processImage(file);
+				const { main, thumbnail } = await processImage(file);
 				
-				const compressedSize = formatFileSize(original.size);
+				const compressedSize = formatFileSize(main.size);
 				toast.info(`Enviando imagem (${compressedSize})...`);
-
+				
 				// Upload to R2
-				const urls = await PinsService.uploadPhoto(original, thumbnail, tempPinId);
+				const urls = await PinsService.uploadPhoto(main, thumbnail, tempPinId);
 				photos = [...photos, urls];
 
 				toast.success(`Foto adicionada! ${originalSize} → ${compressedSize}`);
 			}
 		} catch (err) {
-			console.error('Error uploading photo:', err);
+			logger.error('Error uploading photo:', err);
 			const errorMessage = err instanceof Error ? err.message : i18n.t.errors.uploadPhotoFailed;
 			toast.error(errorMessage);
 		} finally {
@@ -127,7 +128,7 @@
 			toast.success(i18n.t.success.pinCreated);
 			goto('/');
 		} catch (err) {
-			console.error('Error creating pin:', err);
+			logger.error('Error creating pin:', err);
 			toast.error(i18n.t.errors.createPinFailed);
 		} finally {
 			loading = false;

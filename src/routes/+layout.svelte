@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { logger } from '$lib/utils/logger';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
@@ -86,7 +87,7 @@
 	onMount(() => {
 		const handlePopState = () => {
 			// SvelteKit já gerencia automaticamente através do $effect acima
-			console.log('[Navigation] Browser navigation detected');
+			logger.debug('[Navigation] Browser navigation detected');
 		};
 		
 		window.addEventListener('popstate', handlePopState);

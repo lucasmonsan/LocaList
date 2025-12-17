@@ -5,7 +5,7 @@
 	interface Props extends HTMLButtonAttributes {
 		children: Snippet;
 		radius?: 'in' | 'out';
-		variant?: 'ghost' | 'outline' | 'icon' | '';
+		variant?: 'ghost' | 'outline' | 'icon' | 'primary' | 'secondary' | '';
 	}
 
 	let { children, variant = '', radius = 'in', ...rest }: Props = $props();

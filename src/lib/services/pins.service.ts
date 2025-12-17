@@ -262,7 +262,6 @@ export class PinsService {
 	static async deletePhoto(photoUrl: string): Promise<void> {
 		// This would need an API endpoint to delete from R2
 		// For now, we'll just handle it server-side when deleting the pin
-		console.log('Delete photo:', photoUrl);
 	}
 
 	// ========== Reviews ==========
@@ -275,7 +274,7 @@ export class PinsService {
 		user_id: string;
 		rating: number;
 		comment?: string | null;
-		photos?: string[] | null;
+		photos?: string[];
 	}): Promise<void> {
 		// Check if user already reviewed this pin
 		const { data: existing } = await supabase
@@ -325,29 +324,11 @@ export class PinsService {
 
 	/**
 	 * Report review
+	 * TODO: Implementar quando tabela map_review_reports for criada
 	 */
 	static async reportReview(reviewId: string, userId: string): Promise<void> {
-		// Check if already reported
-		const { data: existing } = await supabase
-			.from('map_review_reports')
-			.select('id')
-			.eq('review_id', reviewId)
-			.eq('reported_by', userId)
-			.maybeSingle();
-
-		if (existing) {
-			throw new Error('Você já reportou esta avaliação');
-		}
-
-		const { error } = await supabase
-			.from('map_review_reports')
-			.insert({
-				review_id: reviewId,
-				reported_by: userId,
-				reason: 'inappropriate_content'
-			});
-
-		if (error) throw error;
+		// Tabela não existe ainda no banco
+		throw new Error('Feature não implementada');
 	}
 }
 

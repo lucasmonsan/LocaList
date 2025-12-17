@@ -1,7 +1,7 @@
 import imageCompression from 'browser-image-compression';
 
 export interface CompressedImages {
-	original: File;
+	main: File;
 	thumbnail: File;
 }
 
@@ -45,7 +45,6 @@ export async function compressImage(file: File): Promise<File> {
 			lastModified: Date.now()
 		});
 	} catch (error) {
-		console.error('Error compressing image:', error);
 		throw new Error('Failed to compress image');
 	}
 }
@@ -54,27 +53,22 @@ export async function compressImage(file: File): Promise<File> {
  * Generate thumbnail from image
  */
 export async function generateThumbnail(file: File): Promise<File> {
-	try {
-		const supportsWebP = await checkWebPSupport();
-		
-		const options = {
-			...THUMBNAIL_OPTIONS,
-			fileType: supportsWebP ? 'image/webp' : 'image/jpeg'
-		};
+	const supportsWebP = await checkWebPSupport();
+	
+	const options = {
+		...THUMBNAIL_OPTIONS,
+		fileType: supportsWebP ? 'image/webp' : 'image/jpeg'
+	};
 
-		const thumbnail = await imageCompression(file, options);
-		
-		const extension = supportsWebP ? 'webp' : 'jpg';
-		const newFileName = file.name.replace(/\.[^/.]+$/, `_thumb.${extension}`);
-		
-		return new File([thumbnail], newFileName, {
-			type: thumbnail.type,
-			lastModified: Date.now()
-		});
-	} catch (error) {
-		console.error('Error generating thumbnail:', error);
-		throw new Error('Failed to generate thumbnail');
-	}
+	const thumbnail = await imageCompression(file, options);
+	
+	const extension = supportsWebP ? 'webp' : 'jpg';
+	const newFileName = file.name.replace(/\.[^/.]+$/, `_thumb.${extension}`);
+	
+	return new File([thumbnail], newFileName, {
+		type: thumbnail.type,
+		lastModified: Date.now()
+	});
 }
 
 /**
@@ -92,12 +86,12 @@ export async function processImage(file: File): Promise<CompressedImages> {
 		throw new Error('Image must be smaller than 10 MB');
 	}
 
-	const [original, thumbnail] = await Promise.all([
+	const [main, thumbnail] = await Promise.all([
 		compressImage(file),
 		generateThumbnail(file)
 	]);
 
-	return { original, thumbnail };
+	return { main, thumbnail };
 }
 
 /**

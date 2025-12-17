@@ -6,12 +6,14 @@ export interface I18nDictionary {
       title: string;
       items: string[];
     };
+    [key: string]: any;
   };
   buttons: {
     clear: string;
     search: string;
     locate: string;
     profile: string;
+    [key: string]: string;
   };
   profile: {
     theme: {
@@ -52,12 +54,15 @@ export interface I18nDictionary {
     locationDenied: string;
     locationUnavailable: string;
     locationTimeout: string;
+    [key: string]: string;
   };
   success: {
     locationFound: string;
+    [key: string]: string;
   };
   toast: {
     close: string;
+    [key: string]: string;
   };
   categories: {
     [key: string]: string;
@@ -65,6 +70,10 @@ export interface I18nDictionary {
   places: {
     [key: string]: string;
   };
+  pin?: {
+    [key: string]: string;
+  };
+  [key: string]: any;
 }
 
 export type Locale = 'pt-BR' | 'en-US';

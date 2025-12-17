@@ -21,7 +21,7 @@
 	let rating = $state(0);
 	let hoverRating = $state(0);
 	let comment = $state('');
-	let photos = $state<Array<{ original: string; thumbnail: string }>>([]);
+	let photos = $state<string[]>([]);
 	let loading = $state(false);
 	let uploading = $state(false);
 
@@ -52,13 +52,22 @@
 			for (const file of Array.from(files)) {
 				if (photos.length >= 3) break;
 
-				const processed = await processImage(file);
-				photos = [...photos, processed];
+				const { main } = await processImage(file);
+				const formData = new FormData();
+				formData.append('file', main);
+
+				const res = await fetch('/api/upload', {
+					method: 'POST',
+					body: formData
+				});
+
+				if (!res.ok) throw new Error('Upload failed');
+				const { url } = await res.json();
+				photos = [...photos, url];
 			}
 
 			haptics.success();
 		} catch (error) {
-			console.error('Error processing images:', error);
 			toast.error('Erro ao processar imagens');
 		} finally {
 			uploading = false;
@@ -69,6 +78,10 @@
 	function removePhoto(index: number) {
 		photos = photos.filter((_, i) => i !== index);
 		haptics.light();
+	}
+
+	function getPhotoUrl(photo: string): string {
+		return photo;
 	}
 
 	async function handleSubmit() {
@@ -107,14 +120,13 @@
 				user_id: authState.user.id,
 				rating,
 				comment: comment.trim() || null,
-				photos: photos.length > 0 ? photos.map((p) => p.original) : null
+				photos: photos.length > 0 ? photos : undefined
 			});
 
 			toast.success('Avaliação publicada com sucesso!');
 			haptics.success();
 			onSubmit();
 		} catch (error: any) {
-			console.error('Error creating review:', error);
 			if (error.message?.includes('já avaliou')) {
 				toast.error('Você já avaliou este local');
 			} else {
@@ -134,7 +146,12 @@
 		</button>
 	</header>
 
-	<form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+	<form
+		onsubmit={(e) => {
+			e.preventDefault();
+			handleSubmit();
+		}}
+	>
 		<!-- Rating Stars -->
 		<div class="rating-section">
 			<label>Avaliação *</label>
@@ -151,10 +168,7 @@
 						}}
 						aria-label={`${i + 1} estrelas`}
 					>
-						<Star
-							size={32}
-							fill={i < (hoverRating || rating) ? 'currentColor' : 'none'}
-						/>
+						<Star size={32} fill={i < (hoverRating || rating) ? 'currentColor' : 'none'} />
 					</button>
 				{/each}
 			</div>
@@ -163,13 +177,7 @@
 		<!-- Comment -->
 		<div class="form-group">
 			<label for="comment">Comentário (opcional)</label>
-			<textarea
-				id="comment"
-				bind:value={comment}
-				placeholder="Conte sua experiência..."
-				maxlength="500"
-				rows="4"
-			></textarea>
+			<textarea id="comment" bind:value={comment} placeholder="Conte sua experiência..." maxlength="500" rows="4"></textarea>
 			<small>{comment.length}/500</small>
 		</div>
 
@@ -179,13 +187,8 @@
 			<div class="photo-previews">
 				{#each photos as photo, index}
 					<div class="photo-preview">
-						<img src={photo.thumbnail} alt="Foto da avaliação {index + 1}" />
-						<button
-							type="button"
-							class="remove-photo"
-							onclick={() => removePhoto(index)}
-							aria-label="Remover foto"
-						>
+						<img src={photo} alt="Foto da avaliação {index + 1}" />
+						<button type="button" class="remove-photo" onclick={() => removePhoto(index)} aria-label="Remover foto">
 							<X size={16} />
 						</button>
 					</div>
@@ -193,13 +196,7 @@
 
 				{#if photos.length < 3}
 					<label class="upload-button" class:uploading>
-						<input
-							type="file"
-							accept="image/*"
-							multiple
-							onchange={handlePhotoUpload}
-							disabled={uploading}
-						/>
+						<input type="file" accept="image/*" multiple onchange={handlePhotoUpload} disabled={uploading} />
 						<Image size={24} />
 						{uploading ? 'Processando...' : 'Adicionar'}
 					</label>
@@ -287,7 +284,7 @@
 	}
 
 	.star:hover,
-	.star :global(svg[fill="currentColor"]) {
+	.star :global(svg[fill='currentColor']) {
 		color: var(--warning);
 	}
 
@@ -400,4 +397,3 @@
 		display: none;
 	}
 </style>
-

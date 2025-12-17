@@ -79,7 +79,6 @@
 					);
 					mapState.setPins(pins);
 				} catch (error) {
-					console.error('Error loading pins:', error);
 				}
 			};
 

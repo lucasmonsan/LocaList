@@ -25,7 +25,6 @@
 		try {
 			favorites = await PinsService.getUserFavorites(authState.user.id);
 		} catch (error) {
-			console.error('Error loading favorites:', error);
 			toast.error('Erro ao carregar favoritos');
 		} finally {
 			loading = false;

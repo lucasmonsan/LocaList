@@ -1,3 +1,4 @@
+import { logger } from '$lib/utils/logger';
 import type { OSMFeature, PhotonResponse } from '$lib/types/osm.types';
 import type { CacheItem } from '$lib/types/search.types';
 import { mapState } from '../map/map.svelte';
@@ -126,7 +127,7 @@ class SearchState {
     } catch (error) {
       this.results = [];
       toast.error(i18n.t.errors.searchFailed);
-      console.error('Search error:', error);
+      logger.error('Search error:', error);
     } finally {
       this.finishSearch();
     }
@@ -377,7 +378,7 @@ class SearchState {
         this.history = JSON.parse(stored);
       }
     } catch (e) {
-      console.warn('Failed to load search history:', e);
+      logger.warn('Failed to load search history:', e);
       this.history = [];
     }
   }
@@ -405,7 +406,7 @@ class SearchState {
       this.history = newHistory;
       localStorage.setItem(this.HISTORY_KEY, JSON.stringify(newHistory));
     } catch (e) {
-      console.warn('Failed to save search history:', e);
+      logger.warn('Failed to save search history:', e);
     }
   }
 
@@ -416,7 +417,7 @@ class SearchState {
       this.history = [];
       localStorage.removeItem(this.HISTORY_KEY);
     } catch (e) {
-      console.warn('Failed to clear search history:', e);
+      logger.warn('Failed to clear search history:', e);
     }
   }
 }

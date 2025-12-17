@@ -41,7 +41,6 @@ export class StorageService {
 			// Return public URL
 			return `${PUBLIC_R2_PUBLIC_URL}/${path}`;
 		} catch (error) {
-			console.error('Error uploading file to R2:', error);
 			throw new Error('Failed to upload file');
 		}
 	}
@@ -58,7 +57,6 @@ export class StorageService {
 
 			await s3Client.send(command);
 		} catch (error) {
-			console.error('Error deleting file from R2:', error);
 			throw new Error('Failed to delete file');
 		}
 	}
@@ -107,10 +105,8 @@ export class StorageService {
 				await this.deleteFile(thumbnailPath);
 			} catch (err) {
 				// Thumbnail might not exist, ignore error
-				console.warn('Thumbnail not found:', thumbnailPath);
 			}
 		} catch (error) {
-			console.error('Error deleting pin photo:', error);
 			throw error;
 		}
 	}

@@ -6,17 +6,17 @@
 	import { toast } from '$lib/components/toast/toast.svelte';
 	import { i18n } from '$lib/i18n/i18n.svelte';
 	import { formatRelativeTime } from '$lib/utils/time';
-	import type { PinReview } from '$lib/types/database.types';
+	import type { ReviewWithUser } from '$lib/types/database.types';
 
 	interface Props {
-		review: PinReview;
+		review: ReviewWithUser;
 		onUpdate?: () => void;
 	}
 
 	let { review, onUpdate }: Props = $props();
 
 	let isUpvoted = $state(review.user_upvoted ?? false);
-	let upvoteCount = $state(review.upvotes_count ?? 0);
+	let upvoteCount = $state(review.upvotes_count ?? review.upvotes ?? 0);
 	let upvoteLoading = $state(false);
 
 	async function handleUpvote() {
@@ -31,15 +31,11 @@
 		haptics.light();
 
 		try {
-			const newState = await PinsService.toggleReviewUpvote(
-				review.id,
-				authState.user.id
-			);
+			const newState = await PinsService.toggleReviewUpvote(review.id, authState.user.id);
 
 			isUpvoted = newState;
 			upvoteCount = newState ? upvoteCount + 1 : upvoteCount - 1;
 		} catch (error) {
-			console.error('Error toggling upvote:', error);
 			toast.error('Erro ao votar');
 		} finally {
 			upvoteLoading = false;
@@ -61,7 +57,6 @@
 			toast.success('Avaliação reportada com sucesso');
 			haptics.success();
 		} catch (error: any) {
-			console.error('Error reporting review:', error);
 			if (error.message?.includes('já reportou')) {
 				toast.info('Você já reportou esta avaliação');
 			} else {
@@ -74,14 +69,10 @@
 <article class="review-item">
 	<header>
 		<div class="user-info">
-			<img
-				src={review.user_avatar || '/default-avatar.png'}
-				alt={review.user_name}
-				class="avatar"
-			/>
+			<img src={review.user_avatar || review.user?.avatar_url || '/default-avatar.png'} alt={review.user_name || review.user?.full_name || 'User'} class="avatar" />
 			<div>
-				<strong>{review.user_name}</strong>
-				<time>{formatRelativeTime(review.created_at)}</time>
+				<strong>{review.user_name || review.user?.full_name || 'Anônimo'}</strong>
+				<time>{formatRelativeTime(new Date(review.created_at).getTime())}</time>
 			</div>
 		</div>
 
@@ -105,13 +96,7 @@
 	{/if}
 
 	<footer>
-		<button
-			class="upvote-button"
-			class:active={isUpvoted}
-			onclick={handleUpvote}
-			disabled={upvoteLoading}
-			aria-label="Útil"
-		>
+		<button class="upvote-button" class:active={isUpvoted} onclick={handleUpvote} disabled={upvoteLoading} aria-label="Útil">
 			<ThumbsUp size={16} fill={isUpvoted ? 'currentColor' : 'none'} />
 			<span>{upvoteCount}</span>
 		</button>
@@ -250,4 +235,3 @@
 		border-color: var(--error);
 	}
 </style>
-
