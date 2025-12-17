@@ -172,8 +172,7 @@
 		color: var(--warning);
 		margin-bottom: var(--xs);
 		padding: var(--sm);
-		background: var(--warning);
-		background-opacity: 0.1;
+		background: color-mix(in srgb, var(--warning) 10%, transparent);
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
@@ -184,8 +183,7 @@
 		color: var(--brand-primary);
 		margin-bottom: var(--xs);
 		padding: var(--md);
-		background: var(--brand-primary);
-		background-opacity: 0.1;
+		background: color-mix(in srgb, var(--brand-primary) 10%, transparent);
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
@@ -215,8 +213,7 @@
 		padding: var(--sm) var(--md);
 		background: linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
 		border-radius: var(--radius-md);
-		border: 2px solid var(--brand-primary);
-		border-opacity: 0.2;
+		border: 2px solid color-mix(in srgb, var(--brand-primary) 20%, transparent);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 	}
 
