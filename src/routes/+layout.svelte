@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { authState } from '$lib/stores/auth.svelte';
+	import { navigationService } from '$lib/services/navigation.service';
 	import favicon from '$lib/assets/favicon.svg';
 	import Dock from '$lib/components/dock/Dock.svelte';
 	import Map from '$lib/components/map/Map.svelte';
@@ -14,6 +16,33 @@
 
 	$effect(() => {
 		authState.init(data.supabase, data.session);
+	});
+
+	// Sincronizar query params com estado da aplicação
+	$effect(() => {
+		const pinId = page.url.searchParams.get('pin');
+		const expanded = page.url.searchParams.get('expanded') === 'true';
+		const showReview = page.url.searchParams.get('review') === 'true';
+		
+		// TODO: Integrar com BottomSheet quando implementado (COMMIT 6)
+		// Por enquanto, apenas monitora os parâmetros da URL
+		if (pinId) {
+			console.log('[Navigation] Pin opened:', pinId, { expanded, showReview });
+		}
+	});
+
+	// Listener para popstate (botão voltar/avançar do navegador)
+	onMount(() => {
+		const handlePopState = () => {
+			// SvelteKit já gerencia automaticamente através do $effect acima
+			console.log('[Navigation] Browser navigation detected');
+		};
+		
+		window.addEventListener('popstate', handlePopState);
+		
+		return () => {
+			window.removeEventListener('popstate', handlePopState);
+		};
 	});
 
 	let showDock = $derived(page.url.pathname === '/');

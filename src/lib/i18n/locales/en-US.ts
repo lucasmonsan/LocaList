@@ -66,6 +66,7 @@ export const enUS: I18nDictionary = {
     locationTimeout: 'Location request timed out.',
     loadPinsFailed: 'Failed to load pins.',
     loadPinFailed: 'Failed to load pin.',
+    pinNotFound: 'Pin not found.',
     createPinFailed: 'Failed to create pin.',
     updatePinFailed: 'Failed to update pin.',
     deletePinFailed: 'Failed to delete pin.',

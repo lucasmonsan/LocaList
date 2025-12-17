@@ -66,6 +66,7 @@ export const ptBR: I18nDictionary = {
     locationTimeout: 'Tempo esgotado ao buscar localização.',
     loadPinsFailed: 'Erro ao carregar pins.',
     loadPinFailed: 'Erro ao carregar pin.',
+    pinNotFound: 'Pin não encontrado.',
     createPinFailed: 'Erro ao criar pin.',
     updatePinFailed: 'Erro ao atualizar pin.',
     deletePinFailed: 'Erro ao deletar pin.',
