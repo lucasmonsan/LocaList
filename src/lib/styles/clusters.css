@@ -1,0 +1,75 @@
+/* Marker Cluster Styles */
+.marker-cluster-custom {
+	background: transparent;
+	border: none;
+}
+
+.cluster-marker {
+	background: var(--brand-primary);
+	border: 3px solid var(--surface);
+	border-radius: 50%;
+	color: var(--surface);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: var(--sm);
+	box-shadow: var(--shadow-md);
+	transition: all var(--fast);
+}
+
+.cluster-marker:hover {
+	transform: scale(1.1);
+	box-shadow: var(--shadow-lg);
+}
+
+.cluster-small {
+	width: 32px;
+	height: 32px;
+	font-size: var(--sm);
+}
+
+.cluster-medium {
+	width: 40px;
+	height: 40px;
+	font-size: var(--md);
+}
+
+.cluster-large {
+	width: 48px;
+	height: 48px;
+	font-size: var(--lg);
+}
+
+/* Custom Pin Markers */
+.custom-pin-marker {
+	background: transparent;
+	border: none;
+}
+
+.pin-marker-content {
+	width: 32px;
+	height: 32px;
+	border-radius: 50% 50% 50% 0;
+	transform: rotate(-45deg);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 3px solid var(--surface);
+	box-shadow: var(--shadow-md);
+	font-size: var(--md);
+	cursor: pointer;
+	transition: all var(--fast);
+}
+
+.pin-marker-content:hover {
+	transform: rotate(-45deg) scale(1.15);
+	box-shadow: var(--shadow-lg);
+}
+
+/* Rotate emoji back */
+.pin-marker-content::before {
+	transform: rotate(45deg);
+	display: block;
+}
+

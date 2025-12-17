@@ -1,19 +1,52 @@
 import type { LeafletMap, LeafletMarker, LeafletLibrary } from '$lib/types/leaflet.types';
 import type { OSMFeature } from '$lib/types/osm.types';
+import type { PinWithCategory } from '$lib/types/database.types';
 import { getPlaceType } from '$lib/utils/osm';
 import { MAP_CONFIG } from '$lib/constants/config';
 import { toast } from '$lib/components/toast/toast.svelte';
 import { i18n } from '$lib/i18n/i18n.svelte';
+import { navigationService } from '$lib/services/navigation.service';
+import { haptics } from '$lib/utils/haptics';
 import '$lib/styles/pins.css';
 
 class MapState {
   private map: LeafletMap | null = $state(null);
   private L: LeafletLibrary | null = null;
   private currentLayer: LeafletMarker | null = null;
+  private clusterGroup: any = null; // L.MarkerClusterGroup
+  pins = $state<PinWithCategory[]>([]);
 
-  setMap(mapInstance: LeafletMap | null, leafletLibrary: LeafletLibrary | null) {
+  async setMap(mapInstance: LeafletMap | null, leafletLibrary: LeafletLibrary | null) {
     this.map = mapInstance;
     this.L = leafletLibrary;
+    
+    // Inicializar cluster group
+    if (this.map && this.L) {
+      // Importar MarkerCluster dinamicamente
+      await import('leaflet.markercluster');
+      
+      this.clusterGroup = (this.L as any).markerClusterGroup({
+        maxClusterRadius: 80,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        iconCreateFunction: (cluster: any) => {
+          const count = cluster.getChildCount();
+          let size = 'small';
+          
+          if (count > 10) size = 'medium';
+          if (count > 50) size = 'large';
+          
+          return (this.L as any).divIcon({
+            html: `<div class="cluster-marker cluster-${size}">${count}</div>`,
+            className: 'marker-cluster-custom',
+            iconSize: (this.L as any).point(40, 40)
+          });
+        }
+      });
+      
+      this.map.addLayer(this.clusterGroup);
+    }
   }
 
   getMap() {
@@ -94,6 +127,52 @@ class MapState {
         duration: 1.5
       });
     }
+  }
+
+  // ========== Pin Management ==========
+
+  addPin(pin: PinWithCategory) {
+    if (!this.map || !this.L || !this.clusterGroup) return;
+
+    const categoryColor = pin.category?.color || '#A29BFE';
+    const categoryIcon = pin.category?.icon || '📍';
+
+    const icon = this.L.divIcon({
+      className: 'custom-pin-marker',
+      html: `
+        <div class="pin-marker-content" style="background-color: ${categoryColor};">
+          ${categoryIcon}
+        </div>
+      `,
+      iconSize: [32, 32],
+      iconAnchor: [16, 32]
+    });
+
+    const marker = this.L.marker([pin.latitude, pin.longitude], { icon });
+    
+    marker.on('click', () => {
+      haptics.medium();
+      navigationService.openPin(pin.id);
+    });
+
+    this.clusterGroup.addLayer(marker);
+  }
+
+  setPins(pins: PinWithCategory[]) {
+    this.pins = pins;
+    this.clearPins();
+    pins.forEach(pin => this.addPin(pin));
+  }
+
+  clearPins() {
+    if (this.clusterGroup) {
+      this.clusterGroup.clearLayers();
+    }
+  }
+
+  getBounds() {
+    if (!this.map) return null;
+    return this.map.getBounds();
   }
 }
 

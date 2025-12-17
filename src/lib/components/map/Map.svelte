@@ -2,7 +2,10 @@
 	import 'leaflet/dist/leaflet.css';
 	import { mapState } from './map.svelte';
 	import { themeState } from '$lib/stores/theme.svelte';
+	import { authState } from '$lib/stores/auth.svelte';
+	import { PinsService } from '$lib/services/pins.service';
 	import { MAP_CONFIG } from '$lib/constants/config';
+	import { onMount } from 'svelte';
 
 	let mapElement: HTMLElement;
 	let lightTiles: any = null;
@@ -59,7 +62,32 @@
 		currentTileLayer = prefersDark ? darkTiles : lightTiles;
 		currentTileLayer.addTo(map);
 
-			mapState.setMap(map, L);
+			await mapState.setMap(map, L);
+
+			// Carregar pins quando o mapa se move
+			const loadPinsInView = async () => {
+				const bounds = map.getBounds();
+				if (!bounds) return;
+
+				try {
+					const pins = await PinsService.getPinsByBounds(
+						bounds.getSouth(),
+						bounds.getNorth(),
+						bounds.getWest(),
+						bounds.getEast(),
+						authState.user?.id
+					);
+					mapState.setPins(pins);
+				} catch (error) {
+					console.error('Error loading pins:', error);
+				}
+			};
+
+			// Carregar pins inicialmente
+			map.once('load', loadPinsInView);
+			
+			// Carregar pins quando o mapa se move
+			map.on('moveend', loadPinsInView);
 
 			resizeObserver = new ResizeObserver(() => map.invalidateSize());
 			resizeObserver.observe(mapElement);
