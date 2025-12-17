@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { ErrorHandler, ErrorCategory } from '$lib/utils/errorHandler';
 import type { Pin, PinInsert, PinUpdate, PinWithCategory, PinWithDetails } from '$lib/types/database.types';
 
 export class PinsService {
@@ -136,14 +137,19 @@ export class PinsService {
 	 * Create a new pin
 	 */
 	static async createPin(pin: PinInsert): Promise<Pin> {
-		const { data, error } = await supabase
-			.from('map_pins')
-			.insert(pin)
-			.select()
-			.single();
+		try {
+			const { data, error } = await supabase
+				.from('map_pins')
+				.insert(pin)
+				.select()
+				.single();
 
-		if (error) throw error;
-		return data;
+			if (error) throw error;
+			return data;
+		} catch (error) {
+			ErrorHandler.handle(error, 'PinsService.createPin');
+			throw error;
+		}
 	}
 
 	/**
