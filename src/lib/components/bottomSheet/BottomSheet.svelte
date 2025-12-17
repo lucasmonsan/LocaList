@@ -4,17 +4,31 @@
 	import { X, ChevronUp, ChevronDown, MapPin, Star } from 'lucide-svelte';
 	import { navigationService } from '$lib/services/navigation.service';
 	import { bottomSheetState } from '$lib/stores/bottomSheet.svelte';
+	import { authState } from '$lib/stores/auth.svelte';
+	import { PinsService } from '$lib/services/pins.service';
 	import { haptics } from '$lib/utils/haptics';
+	import { toast } from '$lib/components/toast/toast.svelte';
 	import { i18n } from '$lib/i18n/i18n.svelte';
 
 	let startY = $state(0);
 	let currentY = $state(0);
 	let isDragging = $state(false);
 	let sheetElement: HTMLDivElement;
+	let isFavorited = $state(false);
+	let favoriteLoading = $state(false);
 
 	const DRAG_THRESHOLD = 100; // pixels para confirmar ação
 	const COLLAPSED_HEIGHT = 30; // vh
 	const EXPANDED_HEIGHT = 80; // vh
+
+	// Verificar se pin está favoritado
+	$effect(() => {
+		if (bottomSheetState.pin && authState.user) {
+			isFavorited = bottomSheetState.pin.is_favorited ?? false;
+		} else {
+			isFavorited = false;
+		}
+	});
 
 	function handleTouchStart(e: TouchEvent) {
 		startY = e.touches[0].clientY;
@@ -66,6 +80,38 @@
 		navigationService.closeBottomSheet();
 	}
 
+	async function handleToggleFavorite() {
+		if (!authState.user) {
+			toast.error(i18n.t.errors.loginRequired);
+			return;
+		}
+
+		if (!bottomSheetState.pin || favoriteLoading) return;
+
+		favoriteLoading = true;
+		haptics.medium();
+
+		try {
+			const newState = await PinsService.toggleFavorite(
+				bottomSheetState.pin.id,
+				authState.user.id
+			);
+
+			isFavorited = newState;
+
+			if (newState) {
+				toast.success(i18n.t.success.pinFavorited);
+			} else {
+				toast.info(i18n.t.success.pinUnfavorited);
+			}
+		} catch (error) {
+			console.error('Error toggling favorite:', error);
+			toast.error(i18n.t.errors.favoriteFailed);
+		} finally {
+			favoriteLoading = false;
+		}
+	}
+
 	function handleEscape(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
 			handleClose();
@@ -104,15 +150,27 @@
 				<X size={20} />
 			</button>
 
-			{#if bottomSheetState.expanded}
-				<button class="collapse-button" onclick={handleCollapse} aria-label="Colapsar">
-					<ChevronDown size={20} />
+			<div class="header-actions">
+				<button 
+					class="favorite-button" 
+					class:active={isFavorited}
+					onclick={handleToggleFavorite} 
+					disabled={favoriteLoading}
+					aria-label={isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+				>
+					<Star size={20} fill={isFavorited ? 'currentColor' : 'none'} />
 				</button>
-			{:else}
-				<button class="expand-button" onclick={handleExpand} aria-label="Expandir">
-					<ChevronUp size={20} />
-				</button>
-			{/if}
+
+				{#if bottomSheetState.expanded}
+					<button class="collapse-button" onclick={handleCollapse} aria-label="Colapsar">
+						<ChevronDown size={20} />
+					</button>
+				{:else}
+					<button class="expand-button" onclick={handleExpand} aria-label="Expandir">
+						<ChevronUp size={20} />
+					</button>
+				{/if}
+			</div>
 		</header>
 
 		<!-- Content -->
@@ -212,6 +270,12 @@
 		flex-shrink: 0;
 	}
 
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--xxs);
+	}
+
 	header button {
 		display: flex;
 		align-items: center;
@@ -230,6 +294,23 @@
 	header button:hover {
 		background: var(--bg);
 		color: var(--text-primary);
+	}
+
+	header button:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	.favorite-button {
+		color: var(--text-secondary);
+	}
+
+	.favorite-button.active {
+		color: var(--warning);
+	}
+
+	.favorite-button:hover {
+		transform: scale(1.1);
 	}
 
 	.content {
