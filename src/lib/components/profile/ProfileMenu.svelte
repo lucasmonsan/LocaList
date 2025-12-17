@@ -4,7 +4,7 @@
 	import { themeState } from '$lib/stores/theme.svelte';
 	import { authState } from '$lib/stores/auth.svelte';
 	import type { Locale } from '$lib/i18n/types';
-	import { Sun, Moon, Languages, Star, MessageSquare, Key, LogOut, Info } from 'lucide-svelte';
+	import { Sun, Moon, Languages, Star, MessageSquare, Key, LogOut, Info, Activity } from 'lucide-svelte';
 	import { haptics } from '$lib/utils/haptics';
 
 	interface Props {
@@ -160,6 +160,14 @@
 				</span>
 				{i18n.t.profile.reviews}
 			</a>
+			{#if import.meta.env.DEV}
+				<button onclick={() => (window as any).__togglePerfMonitor?.()} class="dev-option">
+					<span class="icon-wrapper small">
+						<Activity size={16} />
+					</span>
+					Performance Monitor
+				</button>
+			{/if}
 			<a href="https://github.com/lucasmonsan/localista" target="_blank" rel="noopener noreferrer">
 				<span class="icon-wrapper small">
 					<Info size={16} />
@@ -316,7 +324,8 @@
 		gap: var(--xxxs);
 	}
 
-	.links a {
+	.links a,
+	.dev-option {
 		display: flex;
 		align-items: center;
 		gap: var(--xxs);
@@ -327,10 +336,19 @@
 		text-decoration: none;
 		border-radius: var(--radius-in);
 		transition: background var(--fast);
+		width: 100%;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		text-align: left;
 
 		&:hover {
 			background: var(--bg);
 		}
+	}
+
+	.dev-option {
+		color: var(--brand-primary);
 	}
 
 	.action {

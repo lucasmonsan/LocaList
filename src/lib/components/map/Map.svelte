@@ -48,15 +48,17 @@
 				attributionControl: false
 			}).setView(MAP_CONFIG.DEFAULT_CENTER, MAP_CONFIG.DEFAULT_ZOOM);
 
-			lightTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+			// Tiles com otimizações de performance
+			const tileOptions = {
 				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-				maxZoom: 20
-			});
+				maxZoom: 20,
+				updateWhenIdle: true, // Atualiza apenas quando parado
+				updateWhenZooming: false, // Não atualiza durante zoom
+				keepBuffer: 2 // Mantém apenas 2 tiles extras em buffer
+			};
 
-			darkTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
-				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-				maxZoom: 20
-			});
+			lightTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', tileOptions);
+			darkTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', tileOptions);
 
 		const prefersDark = themeState.value === 'dark' || (themeState.value === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 		currentTileLayer = prefersDark ? darkTiles : lightTiles;
@@ -85,8 +87,12 @@
 			// Carregar pins inicialmente
 			map.once('load', loadPinsInView);
 			
-			// Carregar pins quando o mapa se move
-			map.on('moveend', loadPinsInView);
+			// Carregar pins quando o mapa se move (com debounce)
+			let loadTimeout: ReturnType<typeof setTimeout>;
+			map.on('moveend', () => {
+				clearTimeout(loadTimeout);
+				loadTimeout = setTimeout(loadPinsInView, 300); // 300ms debounce
+			});
 
 			// Click no mapa para criar ghost pin
 			map.on('click', (e: any) => {

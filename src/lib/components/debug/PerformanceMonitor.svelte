@@ -2,9 +2,15 @@
 	import { onMount } from 'svelte';
 	import { Activity } from 'lucide-svelte';
 
+	interface Props {
+		show?: boolean;
+	}
+
+	let { show = false }: Props = $props();
+
 	let fps = $state(0);
 	let memory = $state(0);
-	let showStats = $state(false);
+	let showStats = $state(show);
 	let lastTime = 0;
 	let frames = 0;
 
@@ -31,9 +37,15 @@
 
 		const memoryInterval = setInterval(updateMemory, 1000);
 
-		// Toggle com Ctrl+Shift+P
+		// Toggle com Ctrl+Shift+M ou query param ?debug=true
+		const urlParams = new URLSearchParams(window.location.search);
+		if (urlParams.get('debug') === 'true') {
+			showStats = true;
+		}
+
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.ctrlKey && e.shiftKey && e.key === 'P') {
+			if (e.ctrlKey && e.shiftKey && e.key === 'M') {
+				e.preventDefault();
 				showStats = !showStats;
 			}
 		};
@@ -64,7 +76,7 @@
 				</div>
 			{/if}
 		</div>
-		<div class="hint">Ctrl+Shift+P para fechar</div>
+		<div class="hint">Ctrl+Shift+M para alternar</div>
 	</div>
 {/if}
 

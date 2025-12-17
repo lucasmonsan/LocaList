@@ -24,6 +24,14 @@
 
 	let { children, data } = $props();
 	let showSplash = $state(true);
+	let showPerfMonitor = $state(false);
+
+	// Expor globalmente para ser controlado pelo ProfileMenu
+	if (typeof window !== 'undefined') {
+		(window as any).__togglePerfMonitor = () => {
+			showPerfMonitor = !showPerfMonitor;
+		};
+	}
 
 	// SEO dinâmico baseado no pin aberto
 	let seoConfig = $derived(() => {
@@ -196,7 +204,7 @@
 <Splash show={showSplash} />
 <ToastContainer />
 <InstallPrompt />
-<PerformanceMonitor />
+<PerformanceMonitor show={showPerfMonitor} />
 <Map />
 <BottomSheet />
 <GhostPinModal />
