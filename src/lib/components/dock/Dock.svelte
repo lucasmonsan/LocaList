@@ -12,12 +12,12 @@
 	import { authState } from '$lib/stores/auth.svelte';
 	import { toast } from '$lib/components/toast/toast.svelte';
 	import ProfileMenu from '../profile/ProfileMenu.svelte';
-	
+
 	async function handleLocateUser() {
 		if (isLocating) return;
 		isLocating = true;
 		locatedRecently = false;
-		
+
 		try {
 			await mapState.locateUser();
 			locatedRecently = true;
@@ -65,15 +65,13 @@
 			{/if}
 		</Button>
 		<SearchBar />
-		<Button 
-			variant="icon" 
-			radius="out" 
-			onclick={handleLocateUser} 
-			disabled={isLocating} 
+		<Button
+			variant="icon"
+			radius="out"
+			onclick={handleLocateUser}
+			disabled={isLocating}
 			aria-label={i18n.t.buttons.locate}
-			class="gps-button"
-			data-locating={isLocating}
-			data-located={locatedRecently}
+			class="gps-button {isLocating ? 'locating' : ''} {locatedRecently ? 'located' : ''}"
 		>
 			{#if isLocating}
 				<div class="animate-spin">
@@ -122,41 +120,46 @@
 	}
 
 	/* GPS Button feedback states */
-	:global(.gps-button[data-locating='true']) {
+	:global(button.gps-button) {
+		border-radius: var(--radius-out) !important;
+	}
+
+	:global(button.gps-button.locating) {
 		position: relative;
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, transparent) !important;
 		animation: gpsPulse 1.5s ease-in-out infinite;
 	}
 
-	:global(.gps-button[data-locating='true']::before) {
+	:global(button.gps-button.locating::before) {
 		content: '';
 		position: absolute;
-		inset: -2px;
-		border-radius: inherit;
+		inset: -4px;
+		border-radius: calc(var(--radius-out) + 4px);
 		border: 2px solid var(--brand-primary);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-primary) 25%, transparent);
 		pointer-events: none;
-		z-index: 1;
+		z-index: -1;
 	}
 
-	:global(.gps-button[data-located='true']) {
+	:global(button.gps-button.located) {
 		position: relative;
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 25%, transparent) !important;
 		transition: all 0.3s ease;
 	}
 
-	:global(.gps-button[data-located='true']::before) {
+	:global(button.gps-button.located::before) {
 		content: '';
 		position: absolute;
-		inset: -2px;
-		border-radius: inherit;
+		inset: -4px;
+		border-radius: calc(var(--radius-out) + 4px);
 		border: 2px solid var(--success);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--success) 25%, transparent);
 		pointer-events: none;
-		z-index: 1;
+		z-index: -1;
 		animation: successFade 2s ease-out forwards;
 	}
 
 	@keyframes gpsPulse {
-		0%, 100% {
+		0%,
+		100% {
 			box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 25%, transparent);
 		}
 		50% {

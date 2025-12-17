@@ -42,7 +42,7 @@
 					isLoadingPin = false;
 				}, 300);
 			}
-			
+
 			if (authState.user) {
 				isFavorited = bottomSheetState.pin.is_favorited ?? false;
 			} else {
@@ -88,7 +88,7 @@
 
 	function handleTouchEnd() {
 		if (!isDragging) return;
-		
+
 		const deltaY = currentY - startY;
 		isDragging = false;
 
@@ -138,10 +138,7 @@
 		haptics.medium();
 
 		try {
-			const newState = await PinsService.toggleFavorite(
-				bottomSheetState.pin.id,
-				authState.user.id
-			);
+			const newState = await PinsService.toggleFavorite(bottomSheetState.pin.id, authState.user.id);
 
 			isFavorited = newState;
 
@@ -163,7 +160,7 @@
 			return;
 		}
 		if (!bottomSheetState.pin) return;
-		
+
 		navigationService.openReviewForm(bottomSheetState.pin.id);
 		haptics.medium();
 	}
@@ -175,13 +172,13 @@
 
 	async function handleReviewSubmit() {
 		if (!bottomSheetState.pin) return;
-		
+
 		// Reload pin data
 		const updated = await PinsService.getPinById(bottomSheetState.pin.id, authState.user?.id);
 		if (updated) {
 			bottomSheetState.pin = updated;
 		}
-		
+
 		handleCloseReviewForm();
 	}
 
@@ -224,10 +221,10 @@
 			</button>
 
 			<div class="header-actions">
-				<button 
-					class="favorite-button" 
+				<button
+					class="favorite-button"
 					class:active={isFavorited}
-					onclick={handleToggleFavorite} 
+					onclick={handleToggleFavorite}
 					disabled={favoriteLoading}
 					aria-label={favoriteLoading ? i18n.t.a11y?.loading || 'Processando' : isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
 					aria-busy={favoriteLoading}
@@ -339,11 +336,7 @@
 							</div>
 
 							{#if showReviewForm}
-								<ReviewForm 
-									pinId={bottomSheetState.pin.id} 
-									onClose={handleCloseReviewForm}
-									onSubmit={handleReviewSubmit}
-								/>
+								<ReviewForm pinId={bottomSheetState.pin.id} onClose={handleCloseReviewForm} onSubmit={handleReviewSubmit} />
 							{/if}
 
 							{#if bottomSheetState.pin.reviews && bottomSheetState.pin.reviews.length > 0}
@@ -537,12 +530,6 @@
 		gap: var(--xs);
 	}
 
-	.photos-gallery img {
-		width: 100%;
-		height: 120px;
-		object-fit: cover;
-		border-radius: var(--radius-in);
-	}
 
 	.reviews-section {
 		display: flex;
@@ -592,4 +579,3 @@
 		}
 	}
 </style>
-

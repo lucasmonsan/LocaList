@@ -51,7 +51,7 @@
 	data-loading={searchState.loading}
 >
 	{#if searchState.loading}
-		<div class="progress-bar" role="progressbar" aria-label={i18n.t.a11y?.loading || 'Carregando'} aria-busy="true"></div>
+		<div class="progress-bar shimmer" role="progressbar" aria-label={i18n.t.a11y?.loading || 'Carregando'} aria-busy="true"></div>
 	{/if}
 
 	<input
