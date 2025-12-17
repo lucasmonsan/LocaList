@@ -15,8 +15,8 @@
 
 	let { review, onUpdate }: Props = $props();
 
-	let isUpvoted = $state(review.user_upvoted ?? false);
-	let upvoteCount = $state(review.upvotes_count ?? review.upvotes ?? 0);
+	let isUpvoted = $derived(review.user_upvoted ?? false);
+	let upvoteCount = $derived(review.upvotes_count ?? review.upvotes ?? 0);
 	let upvoteLoading = $state(false);
 
 	async function handleUpvote() {

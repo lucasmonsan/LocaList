@@ -10,7 +10,7 @@
 
 	let fps = $state(0);
 	let memory = $state(0);
-	let showStats = $state(show);
+	let showStats = $derived(show);
 	let lastTime = 0;
 	let frames = 0;
 

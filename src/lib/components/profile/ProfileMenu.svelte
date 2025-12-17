@@ -67,6 +67,7 @@
 			<div class="section-label" id="theme-label">{i18n.t.profile.theme.title}</div>
 			<div class="theme-toggle" role="radiogroup" aria-labelledby="theme-label">
 				{#each themes as theme}
+					{@const Icon = theme.icon}
 					<button 
 						class="theme-button" 
 						class:active={themeState.value === theme.value} 
@@ -75,7 +76,7 @@
 						aria-checked={themeState.value === theme.value}
 						aria-label={theme.label}
 					>
-						<svelte:component this={theme.icon} size={18} />
+						<Icon size={18} />
 					</button>
 				{/each}
 			</div>

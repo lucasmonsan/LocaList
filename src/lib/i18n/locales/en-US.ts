@@ -9,6 +9,21 @@ export const enUS: I18nDictionary = {
     toggleTheme: 'Toggle theme',
     selectLanguage: 'Select language'
   },
+  splash: {
+    appName: 'Monsan Map',
+    messages: [
+      'Expelling clouds for better visibility',
+      'Cleaning satellite lenses',
+      'Polishing review stars',
+      'Turning off dark mode lights',
+      'Translating local slang to all languages',
+      'Calibrating internal compass',
+      'Loading maps from the future',
+      'Syncing with the galaxy',
+      'Activating explorer mode',
+      'Preparing epic adventures'
+    ]
+  },
   search: {
     placeholder: 'Search on Monsan Map...',
     noResults: 'No location found for',

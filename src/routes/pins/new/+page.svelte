@@ -259,7 +259,7 @@
 		</div>
 
 		<div class="form-group">
-			<label>Fotos (máx. 5)</label>
+			<div class="photos-label">Fotos (máx. 5)</div>
 			<div class="photos-grid">
 				{#each photos as photo, index}
 					<div class="photo-item">

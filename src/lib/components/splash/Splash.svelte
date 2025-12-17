@@ -10,20 +10,10 @@
 
 	let { show = true }: Props = $props();
 
-	const loadingMessages = [
-		'Expulsando nuvens para melhor visibilidade',
-		'Limpando lentes dos satélites',
-		'Polindo estrelas das análises',
-		'Apagando as luzes do modo dark',
-		'Traduzindo "uai" para todos os idiomas',
-		'Calibrando bússola interna',
-		'Carregando mapas do futuro',
-		'Sincronizando com a galáxia',
-		'Ativando modo explorador',
-		'Preparando aventuras épicas'
-	];
-
-	let currentMessage = $state(loadingMessages[Math.floor(Math.random() * loadingMessages.length)]);
+	let currentMessage = $derived(
+		i18n.t.splash?.messages?.[Math.floor(Math.random() * (i18n.t.splash?.messages?.length || 1))] || 
+		'Loading...'
+	);
 </script>
 
 {#if show}
@@ -32,7 +22,7 @@
 			<div class="logo">
 				<LogoIcon />
 			</div>
-			<h1 class="app-name">Monsan Map</h1>
+			<h1 class="app-name">{i18n.t.splash?.appName || 'Monsan Map'}</h1>
 			<div class="loader animate-spin">
 				<Loader2 size={32} />
 			</div>

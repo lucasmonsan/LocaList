@@ -20,7 +20,7 @@
 	let startY = $state(0);
 	let currentY = $state(0);
 	let isDragging = $state(false);
-	let sheetElement: HTMLDivElement;
+	let sheetElement = $state<HTMLDivElement>();
 	let isFavorited = $state(false);
 	let favoriteLoading = $state(false);
 	let showReviewForm = $state(false);

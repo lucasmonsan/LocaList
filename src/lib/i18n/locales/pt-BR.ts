@@ -9,6 +9,21 @@ export const ptBR: I18nDictionary = {
     toggleTheme: 'Alternar tema',
     selectLanguage: 'Selecionar idioma'
   },
+  splash: {
+    appName: 'Monsan Map',
+    messages: [
+      'Expulsando nuvens para melhor visibilidade',
+      'Limpando lentes dos satélites',
+      'Polindo estrelas das análises',
+      'Apagando as luzes do modo dark',
+      'Traduzindo "uai" para todos os idiomas',
+      'Calibrando bússola interna',
+      'Carregando mapas do futuro',
+      'Sincronizando com a galáxia',
+      'Ativando modo explorador',
+      'Preparando aventuras épicas'
+    ]
+  },
   search: {
     placeholder: 'Pesquise no Monsan Map...',
     noResults: 'Nenhum local encontrado para',
