@@ -127,7 +127,9 @@
 		&.icon {
 			background: var(--surface);
 			color: var(--text-primary);
-			box-shadow: var(--shadow-sm);
+			box-shadow:
+				0 2px 8px rgba(0, 0, 0, 0.12),
+				0 1px 3px rgba(0, 0, 0, 0.08);
 			width: var(--xxxl);
 			height: var(--xxxl);
 			padding: 0;
