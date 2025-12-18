@@ -96,11 +96,6 @@
 	}
 
 	async function handleSubmit() {
-		if (!authState.user) {
-			toast.error(i18n.t.errors.loginRequired);
-			return;
-		}
-
 		if (!validation.isValidRating(rating)) {
 			toast.error('Selecione uma avaliação válida (1-5 estrelas)');
 			return;
@@ -113,11 +108,6 @@
 		}
 
 		const sanitizedComment = trimmedComment ? validation.sanitizeHTML(trimmedComment) : '';
-
-		// Rate limiting
-		const rateLimitKey = `review_${authState.user.id}`;
-		const canProceed = await RateLimiter.check(rateLimitKey, RateLimitPresets.REVIEW_CREATION);
-		if (!canProceed) return;
 
 		if (sanitizedComment) {
 			const profanityValidation = ProfanityFilter.validateComment(sanitizedComment);
@@ -133,23 +123,46 @@
 		haptics.medium();
 
 		try {
+			if (!authState.user) {
+				localDataStore.addReview({
+					pin_id: pinId,
+					rating,
+					comment: sanitizedComment
+				});
+
+				toast.success('Avaliação salva localmente! Faça login para sincronizar.');
+				rating = 0;
+				comment = '';
+				photos = [];
+				onSubmit();
+				onClose();
+				return;
+			}
+
+			// Rate limiting
+			const rateLimitKey = `review_${authState.user.id}`;
+			const canProceed = await RateLimiter.check(rateLimitKey, RateLimitPresets.REVIEW_CREATION);
+			if (!canProceed) return;
+
 			await PinsService.createReview({
 				pin_id: pinId,
 				user_id: authState.user.id,
 				rating,
-				comment: sanitizedComment || null,
-				photos: photos.length > 0 ? photos : undefined
+				comment: sanitizedComment,
+				photos: photos
 			});
 
-			toast.success('Avaliação publicada com sucesso!');
+			toast.success(i18n.t.success.reviewCreated);
 			haptics.success();
+
+			rating = 0;
+			comment = '';
+			photos = [];
+
 			onSubmit();
+			onClose();
 		} catch (error: any) {
-			if (error.message?.includes('já avaliou')) {
-				toast.error('Você já avaliou este local');
-			} else {
-				toast.error(i18n.t.errors.reviewError);
-			}
+			toast.error(i18n.t.errors.review);
 		} finally {
 			loading = false;
 		}
