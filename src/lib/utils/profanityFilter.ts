@@ -3,16 +3,29 @@
  * Em produção, considere usar uma biblioteca como bad-words-ptbr
  */
 const PROFANITY_LIST_PT = [
-  // Adicionar palavras conforme necessário
-  // Esta é uma lista mínima para demonstração
-  'spam',
-  'scam'
+  // Palavras ofensivas comuns (pt-BR)
+  'idiota', 'imbecil', 'burro', 'estupido', 'otario', 'babaca',
+  'fdp', 'porra', 'merda', 'bosta', 'lixo', 'corno',
+  // Spam e golpes
+  'spam', 'scam', 'golpe', 'fraude', 'compre agora', 'clique aqui',
+  'ganhe dinheiro', 'trabalhe em casa', 'renda extra',
+  'bitcoin gratis', 'dinheiro facil', 'promocao imperdivel',
+  // Palavras comerciais suspeitas
+  'vendo', 'compro', 'alugo', 'troco', 'negocio',
+  'whatsapp', 'telegram', 'instagram', 'link na bio'
 ];
 
 const PROFANITY_LIST_EN = [
-  'spam',
-  'scam',
-  'fake'
+  // Offensive words (en-US)
+  'idiot', 'stupid', 'dumb', 'moron', 'jerk', 'ass',
+  'shit', 'crap', 'damn', 'hell', 'suck',
+  // Spam and scams
+  'spam', 'scam', 'fraud', 'fake', 'buy now', 'click here',
+  'make money', 'work from home', 'earn money', 'get rich',
+  'free bitcoin', 'easy money', 'limited offer',
+  // Suspicious commercial words
+  'selling', 'buying', 'renting', 'trading', 'deal',
+  'whatsapp', 'telegram', 'instagram', 'link in bio'
 ];
 
 /**
@@ -28,7 +41,7 @@ export class ProfanityFilter {
     if (!text) return false;
 
     const normalized = text.toLowerCase().trim();
-    
+
     return this.wordList.some(word => {
       const pattern = new RegExp(`\\b${word}\\b`, 'i');
       return pattern.test(normalized);
@@ -42,7 +55,7 @@ export class ProfanityFilter {
     if (!text) return text;
 
     let censored = text;
-    
+
     this.wordList.forEach(word => {
       const pattern = new RegExp(`\\b${word}\\b`, 'gi');
       censored = censored.replace(pattern, replacement);

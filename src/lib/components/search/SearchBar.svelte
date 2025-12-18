@@ -122,8 +122,9 @@
 		top: 0;
 		left: 0;
 		height: 3px;
-		background: var(--brand-primary);
-		animation: progress 1.5s ease-in-out infinite;
+		background: linear-gradient(90deg, var(--brand-primary) 0%, var(--brand-secondary) 50%, var(--brand-primary) 100%);
+		background-size: 200% 100%;
+		animation: progress 1.5s ease-in-out infinite, shimmer 1.5s ease-in-out infinite;
 		border-radius: var(--radius-out) var(--radius-out) 0 0;
 	}
 
@@ -139,6 +140,15 @@
 		100% {
 			width: 0%;
 			left: 100%;
+		}
+	}
+
+	@keyframes shimmer {
+		0% {
+			background-position: -200% 0;
+		}
+		100% {
+			background-position: 200% 0;
 		}
 	}
 
