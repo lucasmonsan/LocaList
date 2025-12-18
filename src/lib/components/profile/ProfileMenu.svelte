@@ -68,10 +68,10 @@
 			<div class="theme-toggle" role="radiogroup" aria-labelledby="theme-label">
 				{#each themes as theme}
 					{@const Icon = theme.icon}
-					<button 
-						class="theme-button" 
-						class:active={themeState.value === theme.value} 
-						onclick={() => handleThemeSelect(theme.value)} 
+					<button
+						class="theme-button"
+						class:active={themeState.value === theme.value}
+						onclick={() => handleThemeSelect(theme.value)}
 						role="radio"
 						aria-checked={themeState.value === theme.value}
 						aria-label={theme.label}
@@ -86,10 +86,10 @@
 			<div class="section-label" id="language-label">{i18n.t.profile.language.title}</div>
 			<div class="language-toggle" role="radiogroup" aria-labelledby="language-label">
 				{#each languages as lang}
-					<button 
-						class="language-button" 
-						class:active={i18n.locale === lang.value} 
-						onclick={() => handleLanguageSelect(lang.value)} 
+					<button
+						class="language-button"
+						class:active={i18n.locale === lang.value}
+						onclick={() => handleLanguageSelect(lang.value)}
 						role="radio"
 						aria-checked={i18n.locale === lang.value}
 						aria-label={lang.label}
@@ -129,12 +129,12 @@
 			{#if authState.user}
 				<div class="user-action">
 					<small class="user-email">{authState.user.email}</small>
-				<button class="logout" onclick={() => authState.signOut()} aria-label={i18n.t.profile.logout}>
-					<span class="icon-wrapper small">
-						<LogOut size={16} />
-					</span>
-					{i18n.t.profile.logout}
-				</button>
+					<button class="logout" onclick={() => authState.signOut()} aria-label={i18n.t.profile.logout}>
+						<span class="icon-wrapper small">
+							<LogOut size={16} />
+						</span>
+						{i18n.t.profile.logout}
+					</button>
 				</div>
 			{:else}
 				<a
@@ -159,7 +159,6 @@
 		background: var(--surface);
 		border-radius: var(--radius-out);
 		padding: var(--xs);
-		margin-bottom: var(--xxs);
 		display: flex;
 		flex-direction: column;
 		gap: var(--xs);

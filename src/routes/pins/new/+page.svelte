@@ -217,8 +217,8 @@
 	}
 </script>
 
-<div class="page-container">
-	<div class="modal-card">
+<div class="page-container" transition:fade={{ duration: 200 }}>
+	<div class="modal-card" transition:fly={{ y: 50, duration: 300, opacity: 0 }}>
 		<header>
 			<h5>{i18n.t.pinCreation?.title || 'Novo Local'}</h5>
 			<Button variant="ghost" onclick={() => goto('/')} aria-label={i18n.t.buttons.close} class="close-btn">
