@@ -54,6 +54,21 @@ class MapState {
       });
 
       this.map.addLayer(this.clusterGroup);
+
+      // Auto-locate user if permission already granted
+      if ('permissions' in navigator && 'geolocation' in navigator) {
+        try {
+          const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
+          if (permissionStatus.state === 'granted') {
+            // Silently locate user without showing toast
+            this.locateUser().catch(() => {
+              // Ignore errors on auto-locate
+            });
+          }
+        } catch (error) {
+          // Permissions API not supported, ignore
+        }
+      }
     }
   }
 
